@@ -1,0 +1,16 @@
+{
+  "activeConfigId": "local-default",
+  "configs": [
+    {
+      "id": "local-default",
+      "name": "本地预处理",
+      "provider": "local",
+      "model": "local-cartoon-preprocess",
+      "endpoint": "",
+      "prompt": "保留主体轮廓，减少渐变和杂色，输出适合像素化的清晰卡通图片。",
+      "enabled": false,
+      "apiKey": "",
+      "apiKeyPresent": false
+    }
+  ]
+}

@@ -1,0 +1,515 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content" />
+    <title>拼豆像素画设计工具</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="auth-gate" id="authGate" hidden>
+      <form class="auth-card" id="authForm">
+        <div class="brand auth-brand">
+          <span class="brand-mark">P</span>
+          <div>
+            <strong>拼豆设计</strong>
+            <small>私有网页版</small>
+          </div>
+        </div>
+        <h1>输入访问密码</h1>
+        <p>这是单用户私有页面，登录后可继续使用图库、色块库和拼装进度。</p>
+        <label for="authPassword">访问密码</label>
+        <input id="authPassword" type="password" autocomplete="current-password" placeholder="请输入访问密码" />
+        <button class="primary" type="submit">进入应用</button>
+        <div class="notice warn" id="authNotice">未登录时不会加载作品数据。</div>
+      </form>
+    </div>
+    <div class="app-shell" id="appShell">
+      <aside class="rail" aria-label="主导航">
+        <div class="brand">
+          <span class="brand-mark">P</span>
+          <div>
+            <strong>拼豆设计</strong>
+            <small>桌面端原型</small>
+          </div>
+        </div>
+        <div class="runtime-banner" id="runtimeBanner">正在检查运行状态</div>
+        <button class="rail-toggle icon-toggle" id="railCollapseBtn" title="收起菜单" aria-label="收起菜单">‹</button>
+        <nav class="nav">
+          <button class="nav-item active" data-panel="dashboard" data-short="首">首页</button>
+          <button class="nav-item" data-panel="workspace" data-short="工">工作台</button>
+          <button class="nav-item" data-panel="palette" data-short="色">色块库</button>
+          <button class="nav-item" data-panel="gallery" data-short="图">图库</button>
+          <button class="nav-item" data-panel="assembly" data-short="拼">拼装页</button>
+          <button class="nav-item" data-panel="settings" data-short="AI">AI 设置</button>
+        </nav>
+      </aside>
+
+      <main class="main">
+        <section class="panel active" id="dashboard-panel">
+          <header class="topbar">
+            <div>
+              <h1>首页看板</h1>
+              <p>查看图库、拼装进度和库存补货提醒。</p>
+            </div>
+            <div class="top-actions">
+              <button class="secondary" id="dashboardOpenGalleryBtn">查看图库</button>
+              <button class="primary" id="dashboardOpenPaletteBtn">补充色块</button>
+            </div>
+          </header>
+          <div class="dashboard-grid">
+            <section class="dashboard-card dashboard-link-card" data-dashboard-target="gallery" role="button" tabindex="0">
+              <h2>图库情况</h2>
+              <div class="dashboard-metrics" id="dashboardGalleryStats"></div>
+            </section>
+            <section class="dashboard-card dashboard-link-card" data-dashboard-target="assembly" role="button" tabindex="0">
+              <h2>拼装情况</h2>
+              <div class="dashboard-metrics" id="dashboardAssemblyStats"></div>
+            </section>
+            <section class="dashboard-card dashboard-card-wide dashboard-link-card" data-dashboard-target="palette" role="button" tabindex="0">
+              <h2>补充色块提醒</h2>
+              <div class="notice" id="dashboardInventoryNotice">正在统计库存。</div>
+              <div class="palette-used" id="dashboardLowStockList"></div>
+            </section>
+          </div>
+        </section>
+
+        <section class="panel" id="workspace-panel">
+          <header class="topbar">
+            <div>
+              <h1>图片转实体色块像素画</h1>
+              <p>AI 只负责照片卡通化，本地完成像素化、色块匹配与生产导出。</p>
+            </div>
+            <div class="top-actions">
+              <button class="secondary" id="regenerateBtn">重新生成</button>
+              <button class="secondary" id="saveProjectBtn">采纳当前结果</button>
+              <button class="primary" id="exportBtn">导出生产文件</button>
+            </div>
+          </header>
+
+          <div class="workspace-grid" id="workspaceGrid">
+            <section class="control-panel" id="controlPanel">
+              <div class="control-panel-header">
+                <strong>上传与配置</strong>
+                <button class="panel-toggle icon-toggle" id="controlPanelToggle" title="收起配置" aria-label="收起配置">‹</button>
+              </div>
+              <div class="control-panel-body">
+                <label class="file-drop" for="imageInput">
+                  <input id="imageInput" type="file" accept="image/*" />
+                  <span>导入真实照片或卡通图</span>
+                  <small>PNG / JPG / WebP</small>
+                </label>
+                <div class="top-actions stacked-actions">
+                  <button class="secondary" id="sampleImageBtn">使用示例图</button>
+                </div>
+
+                <div class="field">
+                  <label for="projectName">作品名称</label>
+                  <input id="projectName" type="text" maxlength="40" placeholder="导入图片后自动填入" />
+                </div>
+
+                <div class="field">
+                  <label>输入类型</label>
+                  <div class="segmented">
+                    <button class="segment active" data-input-type="cartoon">卡通图</button>
+                    <button class="segment" data-input-type="photo">真实照片</button>
+                  </div>
+                </div>
+
+                <div class="field two-col">
+                  <label>
+                    宽度
+                    <input id="pixelWidth" type="number" min="16" max="192" value="50" />
+                  </label>
+                  <label>
+                    高度
+                    <input id="pixelHeight" type="number" min="16" max="192" value="50" />
+                  </label>
+                </div>
+
+                <div class="field">
+                  <label for="presetSelect">常用规格</label>
+                  <select id="presetSelect">
+                    <option value="50x50">50 x 50</option>
+                    <option value="100x100">100 x 100</option>
+                  </select>
+                </div>
+
+                <div class="field">
+                  <label for="maxColorTypes">最多使用色块种类</label>
+                  <input id="maxColorTypes" type="number" min="1" max="999" placeholder="不填则使用全部可用色块" />
+                  <small class="field-hint" id="maxColorTypesHint">生成结果会限制在该数量以内。</small>
+                </div>
+
+                <div class="field">
+                  <label>生成色号清单</label>
+                  <button class="palette-plan-card" id="openPalettePlanBtn" type="button">
+                    <span>
+                      <strong id="palettePlanSummary">未指定色号清单</strong>
+                      <small id="palettePlanHint">可分析推荐或手动选择，生成时优先使用清单色号。</small>
+                    </span>
+                    <span class="palette-plan-swatches" id="palettePlanSwatches"></span>
+                  </button>
+                </div>
+
+                <div class="field">
+                  <label for="cropMode">主体裁剪</label>
+                  <select id="cropMode">
+                    <option value="cover">主体居中</option>
+                    <option value="contain">完整画面</option>
+                    <option value="manual">手动裁剪</option>
+                  </select>
+                </div>
+
+                <div class="hidden-controls" aria-hidden="true">
+                  <input id="cropZoom" type="hidden" value="100" />
+                  <input id="cropX" type="hidden" value="0" />
+                  <input id="cropY" type="hidden" value="0" />
+                  <span id="cropZoomValue">100%</span>
+                  <span id="cropXValue">0</span>
+                  <span id="cropYValue">0</span>
+                  <input id="zoomRange" type="hidden" value="10" />
+                  <span id="zoomValue">10px/格</span>
+                </div>
+
+                <div class="field">
+                  <label for="deltaThreshold">替代色提醒阈值 Delta E</label>
+                  <input id="deltaThreshold" type="range" min="8" max="60" value="28" />
+                  <div class="range-row">
+                    <span>严格</span>
+                    <strong id="thresholdValue">28</strong>
+                    <span>宽松</span>
+                  </div>
+                </div>
+
+                <div class="toggle-row">
+                  <label><input type="checkbox" id="gridToggle" checked /> 网格</label>
+                  <label><input type="checkbox" id="labelToggle" /> 编号</label>
+                </div>
+
+                <button class="primary full" id="generateBtn">生成像素画</button>
+                <div class="notice" id="pipelineNotice">卡通图将直接进行本地像素化。</div>
+              </div>
+            </section>
+
+            <section class="canvas-area">
+              <div class="canvas-toolbar">
+                <div class="status-pill" id="matrixStatus">等待导入图片</div>
+                <div class="status-pill warn" id="riskStatus">暂无色差风险</div>
+              </div>
+              <div class="canvas-scroll" id="canvasScroll" title="触摸板双指缩放，空格或中键拖动画布">
+                <canvas id="pixelCanvas" width="640" height="640"></canvas>
+              </div>
+            </section>
+
+            <aside class="stats-panel workspace-stats">
+              <div class="workspace-stats-head">
+                <h2>本次色块统计</h2>
+                <button class="panel-toggle" id="closeWorkspaceStatsBtn" type="button" aria-label="关闭本次色块统计">×</button>
+              </div>
+              <div class="field compact-field">
+                <label for="paintBlockSelect">绘制色块</label>
+                <select id="paintBlockSelect"></select>
+              </div>
+              <div class="tool-row" aria-label="像素编辑工具">
+                <button class="tool-button active" data-tool="inspect" title="点选统计高亮">高亮</button>
+                <button class="tool-button" data-tool="brush" title="逐格绘制">画笔</button>
+                <button class="tool-button" data-tool="fill" title="连通区域填充">填充</button>
+                <button class="tool-button" data-tool="picker" title="从画布取色">取色</button>
+              </div>
+              <div class="status-pill" id="cursorStatus">坐标：-</div>
+              <div class="replace-row">
+                <select id="replacementSelect"></select>
+                <button class="secondary" id="replaceBtn">全局替换</button>
+                <button class="secondary icon-action" id="undoBtn" title="撤销上次替换">↶</button>
+              </div>
+              <div class="palette-used" id="usedPalette"></div>
+              <div class="candidate-history" id="candidateHistory"></div>
+              <div class="risk-list" id="riskList"></div>
+            </aside>
+          </div>
+
+          <div class="mobile-workspace-fabs" aria-label="工作台快捷操作">
+            <button class="workspace-fab secondary-fab" id="workspaceConfigFab" type="button">配置</button>
+            <button class="workspace-fab secondary-fab" id="workspaceStatsFab" type="button">统计</button>
+            <button class="workspace-fab primary-fab" id="workspaceActionsFab" type="button">结果</button>
+          </div>
+
+          <section class="workspace-action-sheet" id="workspaceActionsSheet" aria-label="结果操作" hidden>
+            <div class="workspace-sheet-head">
+              <strong>结果操作</strong>
+              <button class="panel-toggle" id="closeWorkspaceActionsBtn" type="button" aria-label="关闭结果操作">×</button>
+            </div>
+            <button class="secondary" id="mobileRegenerateResultBtn" type="button">重新生成</button>
+            <button class="secondary" id="mobileSaveResultBtn" type="button">采纳当前结果</button>
+            <button class="primary" id="mobileExportResultBtn" type="button">导出生产文件</button>
+          </section>
+        </section>
+
+        <section class="panel" id="palette-panel">
+          <header class="topbar">
+            <div>
+              <h1>实体色块库</h1>
+              <p>维护可用颜色种类、编号和名称；历史作品会保留采纳时的色块快照。</p>
+            </div>
+            <div class="top-actions">
+              <input class="hidden-file" id="paletteImportInput" type="file" accept="application/json,.json" />
+              <button class="secondary" id="importPaletteBtn">导入色块库</button>
+              <button class="secondary" id="downloadPaletteTemplateBtn">下载导入模板</button>
+              <button class="secondary" id="exportPaletteBtn">导出色块库</button>
+              <button class="secondary" id="openStockBatchBtn">批量库存</button>
+              <button class="primary" id="addColorBtn">新增色块</button>
+            </div>
+          </header>
+
+          <div class="palette-editor">
+            <div class="editor-form">
+              <div class="palette-editor-head">
+                <h2 id="paletteEditorTitle">编辑色块</h2>
+                <button class="panel-toggle" id="closePaletteEditorBtn" type="button" aria-label="关闭编辑色块">×</button>
+              </div>
+              <label class="palette-detail-extra">可用色块上限<input id="paletteLimit" type="number" min="1" max="999" /></label>
+              <div class="notice" id="paletteLimitNotice">当前可用色块：0 / 0</div>
+              <label class="palette-detail-extra">编号<input id="blockCode" type="text" maxlength="8" /></label>
+              <label class="palette-detail-extra">名称<input id="blockName" type="text" maxlength="24" /></label>
+              <label class="palette-detail-extra">色盘</label>
+              <div class="color-picker-row">
+                <span class="color-preview" id="blockColorPreview" aria-hidden="true"></span>
+                <input id="blockColor" type="color" aria-label="选择色块颜色" />
+                <strong id="blockColorValue">rgb(248, 248, 240)</strong>
+              </div>
+              <label class="palette-detail-extra">色彩地图</label>
+              <canvas id="colorMap" class="color-map" width="256" height="160" aria-label="点击色彩地图选择颜色"></canvas>
+              <div class="rgb-grid">
+                <label>R<input id="blockR" type="number" min="0" max="255" /></label>
+                <label>G<input id="blockG" type="number" min="0" max="255" /></label>
+                <label>B<input id="blockB" type="number" min="0" max="255" /></label>
+              </div>
+              <label class="palette-stock-field">当前库存<input id="blockStock" type="number" min="0" max="999999" /></label>
+              <div class="stock-add-row">
+                <input class="hidden-file" id="stockAddAmount" type="number" min="1" max="999999" />
+                <button class="secondary" id="addStockBtn" type="button">入库</button>
+                <button class="secondary" id="deductStockBtn" type="button">扣减</button>
+              </div>
+              <div class="notice" id="stockNotice">库存低于 100 个时会在首页看板提醒。</div>
+              <div class="form-actions">
+                <button class="secondary" id="disableColorBtn">禁用</button>
+                <button class="secondary" id="deleteColorBtn">删除</button>
+                <button class="primary" id="saveColorBtn">保存色块</button>
+              </div>
+            </div>
+            <div class="palette-index-bar" id="paletteIndexBar" aria-label="色块首字母快速定位"></div>
+            <div class="palette-table" id="paletteTable"></div>
+          </div>
+        </section>
+
+        <section class="panel" id="gallery-panel">
+          <header class="topbar">
+            <div>
+              <h1>个人图库</h1>
+              <p>采纳后的作品保存矩阵与色块快照，避免后续色块库调整影响历史图。</p>
+            </div>
+            <div class="top-actions">
+              <input class="hidden-file" id="projectImportInput" type="file" accept="application/json,.json" />
+              <button class="secondary" id="importProjectBtn">导入作品</button>
+              <button class="secondary" id="exportAllProjectsBtn">备份图库</button>
+            </div>
+          </header>
+          <div class="gallery-grid" id="galleryGrid"></div>
+        </section>
+
+        <section class="panel" id="assembly-panel">
+          <header class="topbar">
+            <div>
+              <h1>拼装页</h1>
+              <p>在像素图上标记现实中已经拼好的位置，色块统计会自动扣减剩余数量。</p>
+            </div>
+            <div class="top-actions">
+              <button class="secondary" id="assemblyOpenGalleryBtn">从图库选择</button>
+              <button class="primary" id="assemblySaveProgressBtn">保存拼装进度</button>
+            </div>
+          </header>
+
+          <div class="assembly-grid">
+            <section class="canvas-area">
+              <div class="canvas-toolbar">
+                <div class="status-pill" id="assemblyProjectStatus">-,-</div>
+                <div class="status-pill warn" id="assemblyProgressStatus">0/0</div>
+                <label class="toolbar-control grid-control" for="assemblyMajorGridSelect" aria-label="网格线">
+                  <select id="assemblyMajorGridSelect">
+                    <option value="0">无</option>
+                    <option value="5">5</option>
+                    <option value="10">10</option>
+                  </select>
+                </label>
+              </div>
+              <div class="canvas-scroll" id="assemblyCanvasScroll" title="先在右侧选中色块；点击同色格标记完成；拖拽框选同色格；未选中色块时可直接拖动画布">
+                <canvas id="assemblyCanvas" width="680" height="520"></canvas>
+              </div>
+            </section>
+
+            <aside class="stats-panel assembly-stats">
+              <div class="assembly-stats-head">
+                <h2>拼装色块统计</h2>
+                <button class="panel-toggle" id="closeAssemblyStatsBtn" type="button" aria-label="关闭拼装统计">×</button>
+              </div>
+              <div class="notice" id="assemblyNotice">请先从图库选择一个已采纳作品。</div>
+              <div class="assembly-summary" id="assemblySummary"></div>
+              <div class="palette-used assembly-used" id="assemblyUsedPalette"></div>
+            </aside>
+          </div>
+
+          <div class="mobile-assembly-fabs" aria-label="拼装快捷操作">
+            <button class="assembly-fab secondary-fab" id="assemblyStatsFab" type="button">统计</button>
+            <button class="assembly-fab primary-fab" id="assemblyActionsFab" type="button">操作</button>
+          </div>
+
+          <section class="assembly-action-sheet" id="assemblyActionsSheet" aria-label="拼装操作" hidden>
+            <div class="assembly-sheet-head">
+              <strong>拼装操作</strong>
+              <button class="panel-toggle" id="closeAssemblyActionsBtn" type="button" aria-label="关闭拼装操作">×</button>
+            </div>
+            <button class="secondary" id="mobileAssemblyChooseProjectBtn" type="button">从图库选择</button>
+            <button class="primary" id="mobileAssemblySaveProgressBtn" type="button">保存拼装进度</button>
+          </section>
+        </section>
+
+        <section class="panel" id="settings-panel">
+          <header class="topbar">
+            <div>
+              <h1>AI 设置</h1>
+              <p>第一阶段仅用于真实照片卡通化；像素化和色块映射保持本地可控。</p>
+            </div>
+          </header>
+          <div class="settings-grid">
+            <div class="field">
+              <label for="aiConfigSelect">启用模型配置</label>
+              <select id="aiConfigSelect"></select>
+            </div>
+            <label>供应商<select id="aiProvider"><option value="openai">OpenAI 图像模型</option><option value="custom">其他云端模型</option><option value="local">本地模拟</option></select></label>
+            <label>模型名称<input id="aiModel" value="gpt-image-1.5" /></label>
+            <label>自定义端点<input id="aiEndpoint" placeholder="其他云端模型可填写 HTTPS 接口地址" /></label>
+            <label>API Key<input id="aiKey" type="password" placeholder="静态原型只保存到本机浏览器存储" /></label>
+            <label>卡通化提示词<textarea id="aiPrompt">保留主体轮廓，减少渐变和杂色，输出适合像素化的清晰卡通图片。</textarea></label>
+            <label class="inline-check"><input id="aiEnabled" type="checkbox" /> 真实照片生成时优先使用云端卡通化</label>
+            <div class="form-actions">
+              <button class="secondary" id="addAiConfigBtn">新增配置</button>
+              <button class="secondary" id="deleteAiConfigBtn">删除配置</button>
+              <button class="secondary" id="testAiBtn">检查设置</button>
+              <button class="secondary" id="diagnosticsBtn">运行诊断</button>
+              <button class="secondary" id="openDataDirBtn">打开数据目录</button>
+              <button class="secondary" id="migrateLocalBtn">迁移静态版数据</button>
+              <button class="secondary" id="backupAllBtn">备份全部数据</button>
+              <input class="hidden-file" id="restoreAllInput" type="file" accept="application/json,.json" />
+              <button class="secondary" id="restoreAllBtn">恢复完整备份</button>
+              <button class="primary" id="saveAiBtn">保存 AI 设置</button>
+            </div>
+            <div class="notice" id="aiNotice">静态版默认使用本地卡通化预处理；需要云端模型时请通过本机服务入口打开。</div>
+            <div class="diagnostics-panel" id="diagnosticsPanel"></div>
+          </div>
+        </section>
+      </main>
+
+      <div class="app-toast" id="appToast" role="status" aria-live="polite"></div>
+
+      <div class="mobile-action-bar" aria-label="当前页面快捷操作">
+        <button class="secondary" id="mobileDashboardGalleryBtn" data-mobile-panel="dashboard" type="button">图库</button>
+        <button class="primary" id="mobileDashboardPaletteBtn" data-mobile-panel="dashboard" type="button">补色块</button>
+        <button class="secondary" id="mobileGenerateBtn" data-mobile-panel="workspace" type="button">生成</button>
+        <button class="secondary" id="mobileSaveProjectBtn" data-mobile-panel="workspace" type="button">采纳</button>
+        <button class="primary" id="mobileExportBtn" data-mobile-panel="workspace" type="button">导出</button>
+        <button class="secondary" id="mobileStockBatchBtn" data-mobile-panel="palette" type="button">批量</button>
+        <button class="secondary" id="mobileExportPaletteBtn" data-mobile-panel="palette" type="button">导出</button>
+        <button class="primary" id="mobileAddColorBtn" data-mobile-panel="palette" type="button">新增</button>
+        <button class="secondary" id="mobileImportProjectBtn" data-mobile-panel="gallery" type="button">导入</button>
+        <button class="primary" id="mobileExportAllProjectsBtn" data-mobile-panel="gallery" type="button">备份</button>
+        <button class="secondary" id="mobileAssemblyGalleryBtn" data-mobile-panel="assembly" type="button">选图</button>
+        <button class="primary" id="mobileAssemblySaveBtn" data-mobile-panel="assembly" type="button">保存</button>
+        <button class="secondary" id="mobileTestAiBtn" data-mobile-panel="settings" type="button">检查</button>
+        <button class="primary" id="mobileSaveAiBtn" data-mobile-panel="settings" type="button">保存</button>
+      </div>
+    </div>
+
+    <div class="modal-overlay" id="palettePlanModal" hidden>
+      <section class="modal palette-plan-modal" role="dialog" aria-modal="true" aria-labelledby="palettePlanTitle">
+        <header class="modal-header">
+          <div>
+            <h2 id="palettePlanTitle">生成色号清单</h2>
+            <p>先分析推荐，再按需要勾选或取消色号；生成像素图时会严格使用已勾选色号。</p>
+          </div>
+          <button class="panel-toggle" id="closePalettePlanBtn" type="button" aria-label="关闭色号清单">×</button>
+        </header>
+        <div class="modal-actions">
+          <button class="primary" id="analyzePalettePlanBtn" type="button">分析推荐色号</button>
+          <button class="secondary" id="selectAllPalettePlanBtn" type="button">全选可用色号</button>
+          <button class="secondary" id="clearPalettePlanBtn" type="button">清空清单</button>
+        </div>
+        <div class="notice" id="palettePlanNotice">导入图片后，可按当前裁剪和尺寸分析推荐色号。</div>
+        <div class="palette-plan-count" id="palettePlanCount">已选择 0 种色号</div>
+        <div class="palette-plan-index" id="palettePlanIndexBar" aria-label="色号快速定位"></div>
+        <div class="palette-plan-list" id="palettePlanList"></div>
+      </section>
+    </div>
+
+    <div class="modal-overlay" id="stockBatchModal" hidden>
+      <section class="modal stock-batch-modal" role="dialog" aria-modal="true" aria-labelledby="stockBatchTitle">
+        <header class="modal-header">
+          <div>
+            <h2 id="stockBatchTitle">批量库存</h2>
+            <p>批量设置、补充或扣减色块库库存；库存低于 100 个会进入首页补货提醒。</p>
+          </div>
+          <button class="panel-toggle" id="closeStockBatchBtn" type="button" aria-label="关闭批量库存">×</button>
+        </header>
+        <div class="stock-batch-grid">
+          <label>
+            操作
+            <select id="stockBatchMode">
+              <option value="set">批量设为</option>
+              <option value="add">批量补充</option>
+              <option value="subtract">批量扣减</option>
+            </select>
+          </label>
+          <label>
+            范围
+            <select id="stockBatchScope">
+              <option value="active">全部可用色块</option>
+              <option value="low">低库存色块</option>
+              <option value="all">全部未删除色块</option>
+            </select>
+          </label>
+          <label>
+            数量
+            <input id="stockBatchAmount" type="number" min="0" max="999999" value="0" />
+          </label>
+        </div>
+        <div class="notice" id="stockBatchNotice">选择操作后点击应用，系统会立即更新色块库库存。</div>
+        <div class="modal-actions">
+          <button class="primary" id="applyStockBatchBtn" type="button">应用批量修改</button>
+        </div>
+      </section>
+    </div>
+
+    <div class="modal-overlay" id="stockAdjustModal" hidden>
+      <section class="modal stock-adjust-modal" role="dialog" aria-modal="true" aria-labelledby="stockAdjustTitle">
+        <header class="modal-header">
+          <div>
+            <h2 id="stockAdjustTitle">库存变动</h2>
+            <p id="stockAdjustTarget">选择色块后输入数量。</p>
+          </div>
+          <button class="panel-toggle" id="closeStockAdjustBtn" type="button" aria-label="关闭库存变动">×</button>
+        </header>
+        <label>
+          数量
+          <input id="stockAdjustAmount" type="number" min="1" max="999999" inputmode="numeric" placeholder="输入数量" />
+        </label>
+        <div class="notice" id="stockAdjustNotice">确认后会更新当前库存。</div>
+        <div class="modal-actions">
+          <button class="secondary" id="cancelStockAdjustBtn" type="button">取消</button>
+          <button class="primary" id="confirmStockAdjustBtn" type="button">确认</button>
+        </div>
+      </section>
+    </div>
+
+    <script src="./src/app.js"></script>
+  </body>
+</html>

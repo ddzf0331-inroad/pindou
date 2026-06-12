@@ -1,0 +1,60 @@
+{
+  "name": "pixel-toy-designer",
+  "version": "0.1.0",
+  "private": true,
+  "description": "拼豆像素画设计工具第一阶段桌面端原型",
+  "main": "electron/main.js",
+  "scripts": {
+    "start": "node server.js",
+    "start:private-web": "PIXEL_TOY_PUBLIC_MODE=1 HOST=0.0.0.0 node server.js",
+    "app:sync": "node app/scripts/sync-web-assets.js",
+    "app:check": "node scripts/check-mobile-app.js",
+    "app:doctor:ios": "zsh app/scripts/check-ios-env.sh",
+    "app:clean-bad-ios-profiles": "zsh app/scripts/clean-bad-ios-profiles.sh",
+    "app:build": "zsh app/scripts/build-apk.sh",
+    "app:build:ios": "zsh app/scripts/build-ipa.sh",
+    "app:simple-build": "zsh app/scripts/build-apk-simple.sh",
+    "build:defaults": "node scripts/build-default-data.js",
+    "dev:desktop": "npm run build:defaults && electron .",
+    "package": "npm run build:defaults && electron-builder",
+    "package:mac": "npm run build:defaults && electron-builder --mac dmg",
+    "package:win": "npm run build:defaults && electron-builder --win nsis",
+    "check": "node --check src/app.js && node --check server.js && node --check electron/main.js && node --check scripts/build-default-data.js && node --check scripts/check-mobile-app.js && node --check scripts/check-mobile-defaults.js && python3 -c \"compile(open('server.py', encoding='utf-8').read(), 'server.py', 'exec')\" && node scripts/check-zsh-syntax.js && node scripts/check-dom-bindings.js && node scripts/check-launchers.js && node scripts/check-default-data.js && node scripts/check-core-data.js && node scripts/check-ui-interactions.js && node scripts/check-server-api.js && python3 scripts/check-python-server.py && node scripts/check-ai-pipeline.js && node scripts/check-workflow.js && node scripts/check-assembly-workflow.js && node scripts/check-mobile-app.js && node scripts/check-mobile-defaults.js"
+  },
+  "build": {
+    "appId": "com.pixeltoy.designer",
+    "productName": "拼豆设计",
+    "asar": true,
+    "files": [
+      "index.html",
+      "styles.css",
+      "src/**/*",
+      "server.js",
+      "electron/**/*",
+      "defaults/**/*",
+      "README.md",
+      "使用手册.md",
+      "package.json"
+    ],
+    "mac": {
+      "target": "dmg",
+      "category": "public.app-category.graphics-design",
+      "artifactName": "拼豆设计-${version}-mac.${ext}"
+    },
+    "win": {
+      "target": "nsis",
+      "artifactName": "拼豆设计-${version}-win.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "拼豆设计"
+    }
+  },
+  "devDependencies": {
+    "electron": "^42.3.3",
+    "electron-builder": "^26.12.1"
+  }
+}

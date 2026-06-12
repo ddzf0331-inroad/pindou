@@ -1,0 +1,2654 @@
+[
+  {
+    "id": "tpl-01",
+    "code": "A1",
+    "name": "浅米黄",
+    "rgb": [
+      250,
+      245,
+      205
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-02",
+    "code": "A2",
+    "name": "极浅黄",
+    "rgb": [
+      252,
+      254,
+      214
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-03",
+    "code": "A3",
+    "name": "柠檬黄",
+    "rgb": [
+      252,
+      255,
+      146
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-04",
+    "code": "A4",
+    "name": "亮黄",
+    "rgb": [
+      247,
+      236,
+      92
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-05",
+    "code": "A5",
+    "name": "金黄",
+    "rgb": [
+      240,
+      216,
+      58
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-06",
+    "code": "A6",
+    "name": "浅橙",
+    "rgb": [
+      253,
+      169,
+      81
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-07",
+    "code": "A7",
+    "name": "橙黄",
+    "rgb": [
+      250,
+      140,
+      79
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-08",
+    "code": "A8",
+    "name": "鲜黄",
+    "rgb": [
+      251,
+      218,
+      77
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-09",
+    "code": "A9",
+    "name": "杏橙",
+    "rgb": [
+      247,
+      157,
+      95
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-10",
+    "code": "A10",
+    "name": "深橙",
+    "rgb": [
+      244,
+      126,
+      56
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-11",
+    "code": "A11",
+    "name": "奶油黄",
+    "rgb": [
+      254,
+      219,
+      153
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-12",
+    "code": "A12",
+    "name": "桃橙",
+    "rgb": [
+      253,
+      162,
+      118
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-13",
+    "code": "A13",
+    "name": "浅金黄",
+    "rgb": [
+      254,
+      198,
+      103
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-14",
+    "code": "A14",
+    "name": "橙红",
+    "rgb": [
+      247,
+      88,
+      66
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-15",
+    "code": "A15",
+    "name": "嫩黄",
+    "rgb": [
+      251,
+      246,
+      94
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-16",
+    "code": "A16",
+    "name": "鹅黄",
+    "rgb": [
+      254,
+      255,
+      151
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-17",
+    "code": "A17",
+    "name": "玉米黄",
+    "rgb": [
+      253,
+      225,
+      115
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-18",
+    "code": "A18",
+    "name": "浅杏",
+    "rgb": [
+      252,
+      191,
+      128
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-19",
+    "code": "A19",
+    "name": "珊瑚橙",
+    "rgb": [
+      253,
+      126,
+      119
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-20",
+    "code": "A20",
+    "name": "土黄",
+    "rgb": [
+      249,
+      214,
+      102
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-21",
+    "code": "A21",
+    "name": "米黄",
+    "rgb": [
+      250,
+      227,
+      147
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-22",
+    "code": "A22",
+    "name": "黄绿",
+    "rgb": [
+      237,
+      248,
+      120
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-23",
+    "code": "A23",
+    "name": "浅肤色",
+    "rgb": [
+      228,
+      200,
+      186
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-24",
+    "code": "A24",
+    "name": "淡黄绿",
+    "rgb": [
+      243,
+      246,
+      169
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-25",
+    "code": "A25",
+    "name": "淡黄",
+    "rgb": [
+      253,
+      247,
+      133
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-26",
+    "code": "A26",
+    "name": "深金黄",
+    "rgb": [
+      255,
+      199,
+      52
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-27",
+    "code": "B1",
+    "name": "黄绿",
+    "rgb": [
+      223,
+      241,
+      59
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-28",
+    "code": "B2",
+    "name": "亮绿",
+    "rgb": [
+      100,
+      243,
+      67
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-29",
+    "code": "B3",
+    "name": "浅绿",
+    "rgb": [
+      161,
+      245,
+      134
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-30",
+    "code": "B4",
+    "name": "鲜绿",
+    "rgb": [
+      95,
+      223,
+      52
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-31",
+    "code": "B5",
+    "name": "草绿",
+    "rgb": [
+      57,
+      225,
+      88
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-32",
+    "code": "B6",
+    "name": "薄荷绿",
+    "rgb": [
+      100,
+      224,
+      164
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-33",
+    "code": "B7",
+    "name": "深薄荷",
+    "rgb": [
+      62,
+      174,
+      124
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-34",
+    "code": "B8",
+    "name": "深绿",
+    "rgb": [
+      29,
+      155,
+      84
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-35",
+    "code": "B9",
+    "name": "墨绿",
+    "rgb": [
+      42,
+      80,
+      55
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-36",
+    "code": "B10",
+    "name": "浅蓝绿",
+    "rgb": [
+      154,
+      209,
+      186
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-37",
+    "code": "B11",
+    "name": "橄榄绿",
+    "rgb": [
+      98,
+      112,
+      50
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-38",
+    "code": "B12",
+    "name": "森林绿",
+    "rgb": [
+      26,
+      110,
+      61
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-39",
+    "code": "B13",
+    "name": "淡黄绿",
+    "rgb": [
+      200,
+      232,
+      125
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-40",
+    "code": "B14",
+    "name": "苹果绿",
+    "rgb": [
+      171,
+      232,
+      79
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-41",
+    "code": "B15",
+    "name": "深墨绿",
+    "rgb": [
+      48,
+      83,
+      53
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-42",
+    "code": "B16",
+    "name": "嫩草绿",
+    "rgb": [
+      192,
+      237,
+      156
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-43",
+    "code": "B17",
+    "name": "橄榄黄",
+    "rgb": [
+      158,
+      179,
+      62
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-44",
+    "code": "B18",
+    "name": "亮黄绿",
+    "rgb": [
+      230,
+      237,
+      79
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-45",
+    "code": "B19",
+    "name": "绿松石",
+    "rgb": [
+      38,
+      183,
+      142
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-46",
+    "code": "B20",
+    "name": "极浅绿",
+    "rgb": [
+      203,
+      236,
+      207
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-47",
+    "code": "B21",
+    "name": "深青",
+    "rgb": [
+      24,
+      97,
+      106
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-48",
+    "code": "B22",
+    "name": "墨青",
+    "rgb": [
+      10,
+      66,
+      65
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-49",
+    "code": "B23",
+    "name": "深橄榄",
+    "rgb": [
+      52,
+      59,
+      26
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-50",
+    "code": "B24",
+    "name": "浅黄绿",
+    "rgb": [
+      232,
+      250,
+      166
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-51",
+    "code": "B25",
+    "name": "灰绿",
+    "rgb": [
+      78,
+      132,
+      109
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-52",
+    "code": "B26",
+    "name": "橄榄棕",
+    "rgb": [
+      144,
+      124,
+      53
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-53",
+    "code": "B27",
+    "name": "灰黄绿",
+    "rgb": [
+      208,
+      224,
+      175
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-54",
+    "code": "B28",
+    "name": "浅薄荷",
+    "rgb": [
+      158,
+      229,
+      187
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-55",
+    "code": "B29",
+    "name": "黄绿",
+    "rgb": [
+      198,
+      223,
+      95
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-56",
+    "code": "B30",
+    "name": "极浅黄绿",
+    "rgb": [
+      227,
+      251,
+      177
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-57",
+    "code": "B31",
+    "name": "淡绿",
+    "rgb": [
+      180,
+      230,
+      145
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-58",
+    "code": "B32",
+    "name": "橄榄灰",
+    "rgb": [
+      146,
+      173,
+      96
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-59",
+    "code": "C1",
+    "name": "极浅蓝绿",
+    "rgb": [
+      240,
+      254,
+      228
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-60",
+    "code": "C2",
+    "name": "浅天蓝",
+    "rgb": [
+      171,
+      248,
+      254
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-61",
+    "code": "C3",
+    "name": "淡天蓝",
+    "rgb": [
+      162,
+      224,
+      247
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-62",
+    "code": "C4",
+    "name": "天蓝",
+    "rgb": [
+      68,
+      205,
+      251
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-63",
+    "code": "C5",
+    "name": "深天蓝",
+    "rgb": [
+      6,
+      170,
+      223
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-64",
+    "code": "C6",
+    "name": "浅蓝",
+    "rgb": [
+      84,
+      167,
+      233
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-65",
+    "code": "C7",
+    "name": "蓝色",
+    "rgb": [
+      57,
+      119,
+      202
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-66",
+    "code": "C8",
+    "name": "深蓝",
+    "rgb": [
+      15,
+      82,
+      189
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-67",
+    "code": "C9",
+    "name": "宝蓝",
+    "rgb": [
+      51,
+      73,
+      195
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-68",
+    "code": "C10",
+    "name": "青蓝",
+    "rgb": [
+      60,
+      188,
+      227
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-69",
+    "code": "C11",
+    "name": "青色",
+    "rgb": [
+      42,
+      222,
+      211
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-70",
+    "code": "C12",
+    "name": "藏青",
+    "rgb": [
+      30,
+      51,
+      78
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-71",
+    "code": "C13",
+    "name": "极浅蓝",
+    "rgb": [
+      205,
+      231,
+      254
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-72",
+    "code": "C14",
+    "name": "浅青",
+    "rgb": [
+      213,
+      252,
+      247
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-73",
+    "code": "C15",
+    "name": "深青",
+    "rgb": [
+      33,
+      197,
+      196
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-74",
+    "code": "C16",
+    "name": "海军蓝",
+    "rgb": [
+      24,
+      88,
+      162
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-75",
+    "code": "C17",
+    "name": "亮青",
+    "rgb": [
+      2,
+      209,
+      243
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-76",
+    "code": "C18",
+    "name": "深海军蓝",
+    "rgb": [
+      33,
+      50,
+      68
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-77",
+    "code": "C19",
+    "name": "蓝绿",
+    "rgb": [
+      24,
+      134,
+      157
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-78",
+    "code": "C20",
+    "name": "钢蓝",
+    "rgb": [
+      26,
+      112,
+      169
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-79",
+    "code": "C21",
+    "name": "淡蓝",
+    "rgb": [
+      188,
+      221,
+      252
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-80",
+    "code": "C22",
+    "name": "灰蓝",
+    "rgb": [
+      107,
+      177,
+      187
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-81",
+    "code": "C23",
+    "name": "浅蓝",
+    "rgb": [
+      200,
+      226,
+      253
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-82",
+    "code": "C24",
+    "name": "天蓝色",
+    "rgb": [
+      126,
+      197,
+      249
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-83",
+    "code": "C25",
+    "name": "浅青蓝",
+    "rgb": [
+      169,
+      232,
+      224
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-84",
+    "code": "C26",
+    "name": "中蓝",
+    "rgb": [
+      66,
+      173,
+      207
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-85",
+    "code": "C27",
+    "name": "极浅蓝",
+    "rgb": [
+      208,
+      222,
+      249
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-86",
+    "code": "C28",
+    "name": "灰蓝",
+    "rgb": [
+      189,
+      206,
+      232
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-87",
+    "code": "C29",
+    "name": "靛蓝",
+    "rgb": [
+      54,
+      74,
+      137
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-88",
+    "code": "D1",
+    "name": "浅紫蓝",
+    "rgb": [
+      172,
+      183,
+      239
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-89",
+    "code": "D2",
+    "name": "紫蓝",
+    "rgb": [
+      134,
+      141,
+      211
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-90",
+    "code": "D3",
+    "name": "深紫蓝",
+    "rgb": [
+      53,
+      84,
+      175
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-91",
+    "code": "D4",
+    "name": "藏蓝紫",
+    "rgb": [
+      22,
+      45,
+      123
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-92",
+    "code": "D5",
+    "name": "紫色",
+    "rgb": [
+      179,
+      78,
+      198
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-93",
+    "code": "D6",
+    "name": "浅紫",
+    "rgb": [
+      179,
+      123,
+      220
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-94",
+    "code": "D7",
+    "name": "深紫",
+    "rgb": [
+      135,
+      88,
+      169
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-95",
+    "code": "D8",
+    "name": "极浅紫",
+    "rgb": [
+      227,
+      210,
+      254
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-96",
+    "code": "D9",
+    "name": "淡紫",
+    "rgb": [
+      213,
+      185,
+      244
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-97",
+    "code": "D10",
+    "name": "深紫黑",
+    "rgb": [
+      48,
+      26,
+      73
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-98",
+    "code": "D11",
+    "name": "灰紫",
+    "rgb": [
+      190,
+      185,
+      226
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-99",
+    "code": "D12",
+    "name": "粉紫",
+    "rgb": [
+      220,
+      153,
+      206
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-100",
+    "code": "D13",
+    "name": "深玫紫",
+    "rgb": [
+      181,
+      3,
+      141
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-101",
+    "code": "D14",
+    "name": "暗紫",
+    "rgb": [
+      134,
+      41,
+      147
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-102",
+    "code": "D15",
+    "name": "靛紫",
+    "rgb": [
+      47,
+      31,
+      140
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-103",
+    "code": "D16",
+    "name": "极浅灰紫",
+    "rgb": [
+      226,
+      228,
+      240
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-104",
+    "code": "D17",
+    "name": "浅蓝紫",
+    "rgb": [
+      199,
+      211,
+      249
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-105",
+    "code": "D18",
+    "name": "中紫",
+    "rgb": [
+      154,
+      100,
+      184
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-106",
+    "code": "D19",
+    "name": "灰粉紫",
+    "rgb": [
+      216,
+      194,
+      217
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-107",
+    "code": "D20",
+    "name": "深紫",
+    "rgb": [
+      154,
+      53,
+      173
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-108",
+    "code": "D21",
+    "name": "暗紫",
+    "rgb": [
+      148,
+      5,
+      149
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-109",
+    "code": "D22",
+    "name": "蓝紫",
+    "rgb": [
+      56,
+      56,
+      154
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-110",
+    "code": "D23",
+    "name": "极浅紫",
+    "rgb": [
+      234,
+      219,
+      248
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-111",
+    "code": "D24",
+    "name": "蓝紫",
+    "rgb": [
+      118,
+      138,
+      225
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-112",
+    "code": "D25",
+    "name": "深紫蓝",
+    "rgb": [
+      73,
+      80,
+      194
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-113",
+    "code": "D26",
+    "name": "淡紫",
+    "rgb": [
+      214,
+      198,
+      235
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-114",
+    "code": "E1",
+    "name": "浅粉",
+    "rgb": [
+      246,
+      212,
+      203
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-115",
+    "code": "E2",
+    "name": "淡粉",
+    "rgb": [
+      252,
+      193,
+      221
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-116",
+    "code": "E3",
+    "name": "浅玫粉",
+    "rgb": [
+      246,
+      189,
+      232
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-117",
+    "code": "E4",
+    "name": "玫粉",
+    "rgb": [
+      232,
+      100,
+      158
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-118",
+    "code": "E5",
+    "name": "深玫粉",
+    "rgb": [
+      240,
+      86,
+      159
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-119",
+    "code": "E6",
+    "name": "玫红",
+    "rgb": [
+      235,
+      65,
+      114
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-120",
+    "code": "E7",
+    "name": "深玫红",
+    "rgb": [
+      197,
+      54,
+      116
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-121",
+    "code": "E8",
+    "name": "极浅粉",
+    "rgb": [
+      253,
+      219,
+      233
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-122",
+    "code": "E9",
+    "name": "紫粉",
+    "rgb": [
+      227,
+      118,
+      199
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-123",
+    "code": "E10",
+    "name": "深紫粉",
+    "rgb": [
+      209,
+      59,
+      149
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-124",
+    "code": "E11",
+    "name": "浅肤色",
+    "rgb": [
+      247,
+      218,
+      212
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-125",
+    "code": "E12",
+    "name": "中粉",
+    "rgb": [
+      246,
+      147,
+      191
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-126",
+    "code": "E13",
+    "name": "深玫红",
+    "rgb": [
+      181,
+      2,
+      106
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-127",
+    "code": "E14",
+    "name": "浅肤色",
+    "rgb": [
+      250,
+      212,
+      191
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-128",
+    "code": "E15",
+    "name": "淡粉",
+    "rgb": [
+      245,
+      201,
+      202
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-129",
+    "code": "E16",
+    "name": "极浅肤色",
+    "rgb": [
+      251,
+      244,
+      236
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-130",
+    "code": "E17",
+    "name": "极浅粉",
+    "rgb": [
+      247,
+      227,
+      236
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-131",
+    "code": "E18",
+    "name": "浅粉",
+    "rgb": [
+      249,
+      200,
+      219
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-132",
+    "code": "E19",
+    "name": "中粉",
+    "rgb": [
+      246,
+      187,
+      209
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-133",
+    "code": "E20",
+    "name": "灰粉",
+    "rgb": [
+      215,
+      198,
+      206
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-134",
+    "code": "E21",
+    "name": "深灰粉",
+    "rgb": [
+      192,
+      157,
+      164
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-135",
+    "code": "E22",
+    "name": "暗灰粉",
+    "rgb": [
+      179,
+      140,
+      159
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-136",
+    "code": "E23",
+    "name": "深灰粉",
+    "rgb": [
+      147,
+      125,
+      138
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-137",
+    "code": "E24",
+    "name": "淡紫粉",
+    "rgb": [
+      222,
+      190,
+      229
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-138",
+    "code": "F1",
+    "name": "浅红",
+    "rgb": [
+      254,
+      147,
+      129
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-139",
+    "code": "F2",
+    "name": "红色",
+    "rgb": [
+      246,
+      61,
+      75
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-140",
+    "code": "F3",
+    "name": "橙红",
+    "rgb": [
+      238,
+      78,
+      62
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-141",
+    "code": "F4",
+    "name": "亮红",
+    "rgb": [
+      251,
+      42,
+      64
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-142",
+    "code": "F5",
+    "name": "深红",
+    "rgb": [
+      225,
+      3,
+      40
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-143",
+    "code": "F6",
+    "name": "暗红",
+    "rgb": [
+      145,
+      54,
+      53
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-144",
+    "code": "F7",
+    "name": "酒红",
+    "rgb": [
+      145,
+      25,
+      50
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-145",
+    "code": "F8",
+    "name": "大红",
+    "rgb": [
+      187,
+      1,
+      38
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-146",
+    "code": "F9",
+    "name": "浅红",
+    "rgb": [
+      224,
+      103,
+      122
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-147",
+    "code": "F10",
+    "name": "红棕",
+    "rgb": [
+      135,
+      70,
+      40
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-148",
+    "code": "F11",
+    "name": "深棕红",
+    "rgb": [
+      89,
+      35,
+      35
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-149",
+    "code": "F12",
+    "name": "粉红",
+    "rgb": [
+      243,
+      83,
+      107
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-150",
+    "code": "F13",
+    "name": "橙红",
+    "rgb": [
+      244,
+      92,
+      69
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-151",
+    "code": "F14",
+    "name": "浅粉红",
+    "rgb": [
+      252,
+      173,
+      178
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-152",
+    "code": "F15",
+    "name": "正红",
+    "rgb": [
+      213,
+      5,
+      39
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-153",
+    "code": "F16",
+    "name": "浅肤色",
+    "rgb": [
+      248,
+      192,
+      169
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-154",
+    "code": "F17",
+    "name": "浅棕红",
+    "rgb": [
+      232,
+      155,
+      125
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-155",
+    "code": "F18",
+    "name": "棕红",
+    "rgb": [
+      208,
+      127,
+      74
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-156",
+    "code": "F19",
+    "name": "暗红",
+    "rgb": [
+      190,
+      69,
+      74
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-157",
+    "code": "F20",
+    "name": "灰红",
+    "rgb": [
+      198,
+      148,
+      149
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-158",
+    "code": "F21",
+    "name": "淡粉红",
+    "rgb": [
+      242,
+      184,
+      198
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-159",
+    "code": "F22",
+    "name": "浅粉红",
+    "rgb": [
+      247,
+      195,
+      208
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-160",
+    "code": "F23",
+    "name": "珊瑚红",
+    "rgb": [
+      237,
+      128,
+      108
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-161",
+    "code": "F24",
+    "name": "灰粉红",
+    "rgb": [
+      224,
+      157,
+      175
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-162",
+    "code": "F25",
+    "name": "亮红",
+    "rgb": [
+      232,
+      72,
+      84
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-163",
+    "code": "G1",
+    "name": "浅肤色",
+    "rgb": [
+      255,
+      228,
+      211
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-164",
+    "code": "G2",
+    "name": "浅棕",
+    "rgb": [
+      252,
+      198,
+      172
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-165",
+    "code": "G3",
+    "name": "淡棕",
+    "rgb": [
+      241,
+      196,
+      165
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-166",
+    "code": "G4",
+    "name": "土黄棕",
+    "rgb": [
+      220,
+      179,
+      135
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-167",
+    "code": "G5",
+    "name": "金棕",
+    "rgb": [
+      231,
+      179,
+      78
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-168",
+    "code": "G6",
+    "name": "深金棕",
+    "rgb": [
+      227,
+      160,
+      20
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-169",
+    "code": "G7",
+    "name": "棕色",
+    "rgb": [
+      152,
+      92,
+      58
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-170",
+    "code": "G8",
+    "name": "深棕",
+    "rgb": [
+      113,
+      61,
+      47
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-171",
+    "code": "G9",
+    "name": "浅棕",
+    "rgb": [
+      228,
+      182,
+      133
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-172",
+    "code": "G10",
+    "name": "橙棕",
+    "rgb": [
+      218,
+      140,
+      66
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-173",
+    "code": "G11",
+    "name": "浅黄棕",
+    "rgb": [
+      218,
+      200,
+      152
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-174",
+    "code": "G12",
+    "name": "浅棕",
+    "rgb": [
+      254,
+      201,
+      147
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-175",
+    "code": "G13",
+    "name": "中棕",
+    "rgb": [
+      178,
+      113,
+      75
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-176",
+    "code": "G14",
+    "name": "深棕",
+    "rgb": [
+      139,
+      104,
+      76
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-177",
+    "code": "G15",
+    "name": "极浅黄棕",
+    "rgb": [
+      246,
+      248,
+      227
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-178",
+    "code": "G16",
+    "name": "浅棕",
+    "rgb": [
+      242,
+      216,
+      193
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-179",
+    "code": "G17",
+    "name": "深棕",
+    "rgb": [
+      119,
+      84,
+      78
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-180",
+    "code": "G18",
+    "name": "浅肤色",
+    "rgb": [
+      255,
+      227,
+      213
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-181",
+    "code": "G19",
+    "name": "橙棕",
+    "rgb": [
+      221,
+      125,
+      65
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-182",
+    "code": "G20",
+    "name": "红棕",
+    "rgb": [
+      165,
+      69,
+      47
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-183",
+    "code": "G21",
+    "name": "灰棕",
+    "rgb": [
+      179,
+      133,
+      97
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-184",
+    "code": "H1",
+    "name": "纯白",
+    "rgb": [
+      255,
+      255,
+      255
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-185",
+    "code": "H2",
+    "name": "极浅灰",
+    "rgb": [
+      251,
+      251,
+      251
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-186",
+    "code": "H3",
+    "name": "中灰",
+    "rgb": [
+      180,
+      180,
+      180
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-187",
+    "code": "H4",
+    "name": "深灰",
+    "rgb": [
+      135,
+      135,
+      135
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-188",
+    "code": "H5",
+    "name": "近黑灰",
+    "rgb": [
+      70,
+      70,
+      72
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-189",
+    "code": "H6",
+    "name": "深灰黑",
+    "rgb": [
+      44,
+      44,
+      44
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-190",
+    "code": "H7",
+    "name": "纯黑",
+    "rgb": [
+      1,
+      1,
+      1
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-191",
+    "code": "H8",
+    "name": "浅粉灰",
+    "rgb": [
+      231,
+      214,
+      220
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-192",
+    "code": "H9",
+    "name": "极浅灰",
+    "rgb": [
+      239,
+      237,
+      238
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-193",
+    "code": "H10",
+    "name": "浅灰",
+    "rgb": [
+      235,
+      235,
+      235
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-194",
+    "code": "H11",
+    "name": "中灰",
+    "rgb": [
+      205,
+      205,
+      205
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-195",
+    "code": "H12",
+    "name": "浅米灰",
+    "rgb": [
+      253,
+      246,
+      238
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-196",
+    "code": "H13",
+    "name": "浅紫灰",
+    "rgb": [
+      244,
+      237,
+      241
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-197",
+    "code": "H14",
+    "name": "浅蓝灰",
+    "rgb": [
+      206,
+      215,
+      212
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-198",
+    "code": "H15",
+    "name": "中蓝灰",
+    "rgb": [
+      154,
+      166,
+      166
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-199",
+    "code": "H16",
+    "name": "深黑",
+    "rgb": [
+      27,
+      18,
+      19
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-200",
+    "code": "H17",
+    "name": "极浅灰",
+    "rgb": [
+      240,
+      238,
+      239
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-201",
+    "code": "H18",
+    "name": "极浅黄绿灰",
+    "rgb": [
+      252,
+      255,
+      246
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-202",
+    "code": "H19",
+    "name": "浅米灰",
+    "rgb": [
+      242,
+      238,
+      229
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-203",
+    "code": "H20",
+    "name": "中绿灰",
+    "rgb": [
+      150,
+      160,
+      159
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-204",
+    "code": "H21",
+    "name": "极浅黄绿灰",
+    "rgb": [
+      248,
+      251,
+      230
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-205",
+    "code": "H22",
+    "name": "中灰",
+    "rgb": [
+      202,
+      202,
+      210
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-206",
+    "code": "H23",
+    "name": "深绿灰",
+    "rgb": [
+      155,
+      156,
+      148
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-207",
+    "code": "M1",
+    "name": "浅绿灰",
+    "rgb": [
+      187,
+      198,
+      182
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-208",
+    "code": "M2",
+    "name": "中绿灰",
+    "rgb": [
+      144,
+      153,
+      148
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-209",
+    "code": "M3",
+    "name": "深绿灰",
+    "rgb": [
+      105,
+      126,
+      129
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-210",
+    "code": "M4",
+    "name": "浅米棕",
+    "rgb": [
+      224,
+      212,
+      188
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-211",
+    "code": "M5",
+    "name": "浅黄棕",
+    "rgb": [
+      209,
+      204,
+      175
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-212",
+    "code": "M6",
+    "name": "中黄棕",
+    "rgb": [
+      176,
+      170,
+      134
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-213",
+    "code": "M7",
+    "name": "灰棕",
+    "rgb": [
+      176,
+      167,
+      150
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-214",
+    "code": "M8",
+    "name": "红棕灰",
+    "rgb": [
+      174,
+      128,
+      130
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-215",
+    "code": "M9",
+    "name": "棕灰",
+    "rgb": [
+      166,
+      136,
+      98
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-216",
+    "code": "M10",
+    "name": "粉棕灰",
+    "rgb": [
+      196,
+      179,
+      187
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-217",
+    "code": "M11",
+    "name": "紫棕灰",
+    "rgb": [
+      157,
+      118,
+      147
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-218",
+    "code": "M12",
+    "name": "深紫棕灰",
+    "rgb": [
+      100,
+      75,
+      81
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-219",
+    "code": "M13",
+    "name": "浅棕",
+    "rgb": [
+      199,
+      146,
+      102
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-220",
+    "code": "M14",
+    "name": "红棕",
+    "rgb": [
+      194,
+      117,
+      99
+    ],
+    "status": "active",
+    "stock": 500
+  },
+  {
+    "id": "tpl-221",
+    "code": "M15",
+    "name": "深绿灰",
+    "rgb": [
+      116,
+      125,
+      122
+    ],
+    "status": "active",
+    "stock": 500
+  }
+]
