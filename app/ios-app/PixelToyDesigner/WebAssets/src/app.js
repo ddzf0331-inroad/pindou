@@ -98,6 +98,7 @@ const state = {
   assemblyLocatedCell: null,
   isAssemblySelecting: false,
   assemblySelection: null,
+  assemblyTouchTrail: null,
   assemblyLongPress: null,
   assemblyLongPressTimer: null,
   assemblyTouchPan: null,
@@ -270,6 +271,7 @@ function bindElements() {
     "assemblyOpenGalleryBtn",
     "mobileAssemblyGalleryBtn",
     "assemblySaveProgressBtn",
+    "assemblyStatsToggleBtn",
     "mobileAssemblySaveBtn",
     "assemblyStatsFab",
     "closeAssemblyStatsBtn",
@@ -499,6 +501,11 @@ function bindEvents() {
   els.assemblyOpenGalleryBtn.addEventListener("click", () => switchPanel("gallery"));
   els.mobileAssemblyGalleryBtn.addEventListener("click", () => switchPanel("gallery"));
   els.assemblySaveProgressBtn.addEventListener("click", saveAssemblyProgressManually);
+  els.assemblyStatsToggleBtn.addEventListener("click", () => {
+    state.ui.assemblyStatsCollapsed = !state.ui.assemblyStatsCollapsed;
+    saveUiState();
+    updateUiLayout();
+  });
   els.mobileAssemblySaveBtn.addEventListener("click", saveAssemblyProgressManually);
   els.assemblyStatsFab.addEventListener("click", () => toggleAssemblyStats(true));
   els.closeAssemblyStatsBtn.addEventListener("click", () => toggleAssemblyStats(false));
@@ -1436,6 +1443,7 @@ function updateUiLayout() {
   state.ui = normalizeUiState(state.ui);
   setActivePanel(state.activePanel || "workspace");
   els.appShell.classList.toggle("rail-collapsed", state.ui.railCollapsed);
+  els.appShell.classList.toggle("assembly-stats-collapsed", state.ui.assemblyStatsCollapsed);
   els.workspaceGrid.classList.toggle("controls-collapsed", state.ui.controlPanelCollapsed);
   els.controlPanel.classList.toggle("collapsed", state.ui.controlPanelCollapsed);
   els.railCollapseBtn.textContent = state.ui.railCollapsed ? "›" : "‹";
@@ -1444,6 +1452,11 @@ function updateUiLayout() {
   els.controlPanelToggle.textContent = state.ui.controlPanelCollapsed ? "›" : "‹";
   els.controlPanelToggle.title = state.ui.controlPanelCollapsed ? "展开上传与生成配置" : "收起上传与生成配置";
   els.controlPanelToggle.setAttribute("aria-label", els.controlPanelToggle.title);
+  if (els.assemblyStatsToggleBtn) {
+    els.assemblyStatsToggleBtn.textContent = state.ui.assemblyStatsCollapsed ? "‹" : "›";
+    els.assemblyStatsToggleBtn.title = state.ui.assemblyStatsCollapsed ? "展开拼装统计" : "收起拼装统计";
+    els.assemblyStatsToggleBtn.setAttribute("aria-label", els.assemblyStatsToggleBtn.title);
+  }
   updateMobileActions();
 }
 
@@ -1471,6 +1484,7 @@ function normalizeUiState(ui = {}) {
   return {
     railCollapsed: Boolean(ui.railCollapsed),
     controlPanelCollapsed: Boolean(ui.controlPanelCollapsed),
+    assemblyStatsCollapsed: Boolean(ui.assemblyStatsCollapsed),
     maxColorTypes: Number.isInteger(Number(ui.maxColorTypes)) && Number(ui.maxColorTypes) > 0 ? Number(ui.maxColorTypes) : null,
     generationPaletteIds: Array.isArray(ui.generationPaletteIds) ? ui.generationPaletteIds.map(String) : []
   };
@@ -1729,20 +1743,30 @@ function drawAssemblyMajorGrid(ctx, cell) {
 function drawAssemblyMajorGridLabels(ctx, cell, interval) {
   if (!state.assemblyMatrix || interval * cell < 44) return;
   const { width, height } = state.assemblyMatrix;
-  const fontSize = clamp(Math.floor(cell * 0.28), 8, 11);
+  const fontSize = clamp(Math.floor(cell * 0.26), 11, 18);
+  const padX = clamp(Math.floor(cell * 0.12), 4, 8);
+  const padY = clamp(Math.floor(cell * 0.07), 3, 6);
   ctx.font = `900 ${fontSize}px sans-serif`;
   ctx.textAlign = "left";
   ctx.textBaseline = "top";
-  ctx.lineWidth = Math.max(2, Math.floor(fontSize * 0.24));
-  ctx.strokeStyle = "rgba(255, 255, 255, 0.86)";
-  ctx.fillStyle = "rgba(17, 24, 39, 0.68)";
   for (let y = 0; y < height; y += interval) {
     for (let x = 0; x < width; x += interval) {
       const label = `${Math.floor(x / interval) + 1},${Math.floor(y / interval) + 1}`;
-      const left = x * cell + Math.max(2, cell * 0.08);
-      const top = y * cell + Math.max(2, cell * 0.08);
-      ctx.strokeText?.(label, left, top);
-      ctx.fillText(label, left, top);
+      const textWidth = ctx.measureText ? ctx.measureText(label).width : label.length * fontSize * 0.58;
+      const badgeWidth = Math.ceil(textWidth + padX * 2);
+      const badgeHeight = Math.ceil(fontSize + padY * 2);
+      const left = x * cell + Math.max(2, cell * 0.06);
+      const top = y * cell + Math.max(2, cell * 0.06);
+      ctx.fillStyle = "rgba(255, 255, 255, 0.56)";
+      ctx.fillRect(left, top, badgeWidth, badgeHeight);
+      ctx.strokeStyle = "rgba(17, 24, 39, 0.14)";
+      ctx.lineWidth = 1;
+      ctx.strokeRect(left + 0.5, top + 0.5, badgeWidth - 1, badgeHeight - 1);
+      ctx.lineWidth = Math.max(3, Math.floor(fontSize * 0.26));
+      ctx.strokeStyle = "rgba(255, 255, 255, 0.92)";
+      ctx.fillStyle = "rgba(17, 24, 39, 0.78)";
+      ctx.strokeText?.(label, left + padX, top + padY);
+      ctx.fillText(label, left + padX, top + padY);
     }
   }
 }
@@ -1793,7 +1817,7 @@ function renderAssemblyStats() {
   const marked = [...counts.values()].reduce((sum, item) => sum + item.marked, 0);
   const percent = total ? Math.round((marked / total) * 100) : 0;
   updateAssemblyStatus(counts);
-  els.assemblyNotice.textContent = "先在右侧选中色块，再点击或框选画布中的同色格标记完成；画布点击不会切换选中色块。";
+  els.assemblyNotice.textContent = "先在右侧选中色块，再点击、框选或触屏长按滑动标记同色格；画布点击不会切换选中色块。";
   els.assemblySummary.innerHTML = `
     <span class="summary-item"><span>已拼</span><strong>${marked}</strong></span>
     <span class="summary-item"><span>剩余</span><strong>${Math.max(0, total - marked)}</strong></span>
@@ -1947,6 +1971,90 @@ function clearAssemblyLongPress() {
   state.assemblyLongPress = null;
 }
 
+function beginAssemblyTouchTrail(point, pointerId) {
+  const targetBlock = getSelectedAssemblyBlock();
+  if (!point || !state.assemblyMatrix || !targetBlock) {
+    els.assemblyNotice.textContent = "请先在右侧色块统计中选中一个色块，再长按滑动标记完成。";
+    return;
+  }
+  state.assemblyTouchTrail = {
+    pointerId,
+    targetBlock,
+    lastPoint: point,
+    count: 0,
+    inventoryChanges: new Map()
+  };
+  state.suppressNextAssemblyClick = true;
+  markAssemblyTrailPoint(point);
+  els.assemblyNotice.textContent = `正在连续标记 ${targetBlock.code} ${targetBlock.name}。`;
+}
+
+function markAssemblyTrailPoint(point) {
+  if (!state.assemblyTouchTrail || !point || !state.assemblyMatrix) return false;
+  const targetBlock = state.assemblyTouchTrail.targetBlock;
+  const blockId = state.assemblyMatrix.rows[point.y]?.[point.x];
+  const block = getAssemblyPalette().find((item) => item.id === blockId);
+  state.assemblyLocatedCell = { x: point.x, y: point.y };
+  if (!blocksMatch(targetBlock, block)) return false;
+  const key = assemblyKey(point.x, point.y);
+  if (state.assemblyMarked.has(key)) return false;
+  state.assemblyMarked.add(key);
+  state.assemblyTouchTrail.count += 1;
+  const changes = state.assemblyTouchTrail.inventoryChanges;
+  changes.set(blockId, (changes.get(blockId) || 0) - 1);
+  return true;
+}
+
+function markAssemblyTrailTo(point) {
+  if (!state.assemblyTouchTrail || !point) return;
+  const previous = state.assemblyTouchTrail.lastPoint || point;
+  let changed = false;
+  getCellsBetween(previous, point).forEach((cell) => {
+    if (markAssemblyTrailPoint(cell)) changed = true;
+  });
+  state.assemblyTouchTrail.lastPoint = point;
+  if (changed) {
+    renderAssemblyCanvas();
+    updateAssemblyStatus();
+  } else {
+    state.assemblyLocatedCell = point;
+    updateAssemblyStatus();
+  }
+}
+
+function finishAssemblyTouchTrail() {
+  const trail = state.assemblyTouchTrail;
+  if (!trail) return;
+  state.assemblyTouchTrail = null;
+  if (trail.count > 0) {
+    adjustInventoryForAssemblyChanges(trail.inventoryChanges);
+    saveAssemblyProgress();
+    renderAssemblyPage();
+    els.assemblyNotice.textContent = `已连续标记 ${trail.count} 个 ${trail.targetBlock.code} ${trail.targetBlock.name}。`;
+  } else {
+    renderAssemblyCanvas();
+    els.assemblyNotice.textContent = `滑动轨迹中没有新的 ${trail.targetBlock.code} ${trail.targetBlock.name} 可标记。`;
+  }
+}
+
+function getCellsBetween(start, end) {
+  const cells = [];
+  if (!start || !end) return cells;
+  const dx = end.x - start.x;
+  const dy = end.y - start.y;
+  const steps = Math.max(Math.abs(dx), Math.abs(dy), 1);
+  const seen = new Set();
+  for (let index = 0; index <= steps; index += 1) {
+    const x = Math.round(start.x + (dx * index) / steps);
+    const y = Math.round(start.y + (dy * index) / steps);
+    const key = assemblyKey(x, y);
+    if (seen.has(key)) continue;
+    seen.add(key);
+    cells.push({ x, y });
+  }
+  return cells;
+}
+
 function beginAssemblyTouchPan(event, start = state.assemblyLongPress) {
   if (!start) return;
   clearAssemblyLongPress();
@@ -1993,7 +2101,7 @@ function handleAssemblyCanvasPointerDown(event) {
       const longPress = state.assemblyLongPress;
       if (!longPress || longPress.pointerId !== event.pointerId) return;
       clearAssemblyLongPress();
-      beginAssemblySelection(point, event.pointerId);
+      beginAssemblyTouchTrail(point, event.pointerId);
       state.suppressNextAssemblyClick = true;
     }, 360);
     return;
@@ -2007,6 +2115,12 @@ function handleAssemblyCanvasPointerDown(event) {
 }
 
 function handleAssemblyCanvasPointerMove(event) {
+  if (state.assemblyTouchTrail && state.assemblyTouchTrail.pointerId === event.pointerId) {
+    event.preventDefault?.();
+    const point = getAssemblyCell(event);
+    if (point) markAssemblyTrailTo(point);
+    return;
+  }
   if (state.assemblyLongPress && state.assemblyLongPress.pointerId === event.pointerId) {
     const dx = event.clientX - state.assemblyLongPress.x;
     const dy = event.clientY - state.assemblyLongPress.y;
@@ -2109,6 +2223,12 @@ function handleAssemblyTouchStart(event) {
 
 function handleAssemblyTouchMove(event) {
   if (!state.assemblyMatrix) return;
+  if (state.assemblyTouchTrail && event.touches.length === 1) {
+    event.preventDefault();
+    const point = getAssemblyCell(event.touches[0]);
+    if (point) markAssemblyTrailTo(point);
+    return;
+  }
   if (event.touches.length === 1 && state.assemblyTouchPan && !state.assemblyPinch) {
     event.preventDefault();
     const touch = event.touches[0];
@@ -2139,6 +2259,11 @@ function handleAssemblyTouchMove(event) {
 
 function handleAssemblyTouchEnd(event) {
   if (event.touches.length === 0) {
+    if (state.assemblyTouchTrail) {
+      finishAssemblyTouchTrail();
+      state.assemblyTouchPan = null;
+      return;
+    }
     const pan = state.assemblyTouchPan;
     const touch = event.changedTouches?.[0];
     if (pan && !pan.moved && touch && !state.isAssemblySelecting && !state.assemblyPinch) {
@@ -2561,6 +2686,7 @@ function handlePanPointerMove(event) {
 
 function handleWindowPointerUp(event) {
   clearAssemblyLongPress();
+  finishAssemblyTouchTrail();
   finishAssemblySelection(event);
   state.isPainting = false;
   state.isPanning = false;

@@ -196,6 +196,16 @@ const result = vm.runInContext(`
   const stockAfterBoxSelect = state.palette.find((block) => block.id === "c1").stock;
   const markedAfterBoxSelect = [...state.assemblyMarked].sort();
 
+  state.assemblyMarked = new Set();
+  state.palette.find((block) => block.id === "c1").stock = 10;
+  state.assemblySelectedBlockId = "c1";
+  beginAssemblyTouchTrail({ x: 0, y: 0 }, 9);
+  markAssemblyTrailTo({ x: 2, y: 0 });
+  finishAssemblyTouchTrail();
+  const afterTouchTrail = countAssemblyBlocks();
+  const stockAfterTouchTrail = state.palette.find((block) => block.id === "c1").stock;
+  const markedAfterTouchTrail = [...state.assemblyMarked].sort();
+
   state.assemblyMarked = new Set(["0,0", "2,0", "1,1"]);
   saveAssemblyProgress();
   locateAssemblyBlock("c1");
@@ -223,6 +233,10 @@ const result = vm.runInContext(`
     redAfterBoxSelect: afterBoxSelect.get("c1"),
     blueAfterBoxSelect: afterBoxSelect.get("c2"),
     markedAfterBoxSelect,
+    redAfterTouchTrail: afterTouchTrail.get("c1"),
+    blueAfterTouchTrail: afterTouchTrail.get("c2"),
+    stockAfterTouchTrail,
+    markedAfterTouchTrail,
     summaryMarkup,
     paletteOrderByRemaining,
     manualSaved,
@@ -249,6 +263,10 @@ assert.strictEqual(result.redAfterBoxSelect.marked, 3, "box select should mark a
 assert.strictEqual(result.blueAfterBoxSelect.marked, 0, "box select should not mark other colors");
 assert.strictEqual(result.stockAfterBoxSelect, 7, "box select should deduct newly marked matching cells");
 assert.strictEqual(JSON.stringify(result.markedAfterBoxSelect), JSON.stringify(["0,0", "1,1", "2,0"]), "box select should store only selected-color cells");
+assert.strictEqual(result.redAfterTouchTrail.marked, 2, "touch trail should mark selected-color cells along the path");
+assert.strictEqual(result.blueAfterTouchTrail.marked, 0, "touch trail should ignore different colors along the path");
+assert.strictEqual(result.stockAfterTouchTrail, 8, "touch trail should deduct newly marked matching cells");
+assert.strictEqual(JSON.stringify(result.markedAfterTouchTrail), JSON.stringify(["0,0", "2,0"]), "touch trail should only store selected-color cells");
 assert.ok(result.summaryMarkup.includes("summary-item"), "summary should group each metric with its label");
 assert.ok(result.summaryMarkup.indexOf("已拼") < result.summaryMarkup.indexOf("剩余"), "summary should label completed before remaining");
 assert.ok(result.paletteOrderByRemaining[0].includes("02") && result.paletteOrderByRemaining[0].includes("蓝"), "palette rows should sort by remaining count descending");

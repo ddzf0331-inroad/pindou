@@ -370,6 +370,32 @@ h2 {
   align-items: start;
 }
 
+.app-shell.assembly-stats-collapsed .assembly-grid {
+  grid-template-columns: minmax(420px, 1fr) 56px;
+}
+
+.app-shell.assembly-stats-collapsed .assembly-stats {
+  max-height: 72px;
+  overflow: hidden;
+  padding: 10px;
+}
+
+.app-shell.assembly-stats-collapsed .assembly-stats .notice,
+.app-shell.assembly-stats-collapsed .assembly-stats .assembly-summary,
+.app-shell.assembly-stats-collapsed .assembly-stats .assembly-used {
+  display: none;
+}
+
+.app-shell.assembly-stats-collapsed .assembly-stats-head {
+  justify-content: center;
+}
+
+.app-shell.assembly-stats-collapsed .assembly-stats h2 {
+  writing-mode: vertical-rl;
+  font-size: 13px;
+  letter-spacing: 0;
+}
+
 .workspace-grid.controls-collapsed {
   grid-template-columns: 68px minmax(420px, 1fr) 300px;
 }
@@ -747,6 +773,17 @@ input[type="color"]::-webkit-color-swatch {
 .canvas-toolbar {
   margin-bottom: 10px;
   flex-wrap: wrap;
+}
+
+#assembly-panel .canvas-toolbar {
+  display: grid;
+  grid-template-columns: minmax(78px, auto) minmax(94px, auto) 74px auto auto 44px;
+  align-items: center;
+}
+
+#assembly-panel .canvas-toolbar .secondary,
+#assembly-panel .canvas-toolbar .primary {
+  white-space: nowrap;
 }
 
 .toolbar-control {
@@ -1775,6 +1812,28 @@ canvas.crop-dragging {
     flex-direction: column;
   }
 
+  .app-shell.assembly-stats-collapsed .assembly-grid {
+    display: flex;
+  }
+
+  .app-shell.assembly-stats-collapsed .assembly-stats {
+    max-height: none;
+    overflow: auto;
+    padding: 50px 10px 18px;
+  }
+
+  .app-shell.assembly-stats-collapsed .assembly-stats-head {
+    justify-content: end;
+  }
+
+  .app-shell.assembly-stats-collapsed .assembly-stats h2 {
+    writing-mode: horizontal-tb;
+  }
+
+  .app-shell.assembly-stats-collapsed .assembly-stats .assembly-used {
+    display: grid;
+  }
+
   .assembly-grid .canvas-area {
     order: 1;
   }
@@ -1917,6 +1976,12 @@ canvas.crop-dragging {
     background: rgba(246, 248, 250, 0.96);
     box-shadow: 0 10px 24px rgba(17, 24, 39, 0.08);
     backdrop-filter: blur(14px);
+  }
+
+  .app-shell[data-active-panel="assembly"] #assemblyOpenGalleryBtn,
+  .app-shell[data-active-panel="assembly"] #assemblySaveProgressBtn,
+  .app-shell[data-active-panel="assembly"] #assemblyStatsToggleBtn {
+    display: none;
   }
 
   .app-shell[data-active-panel="assembly"] .status-pill {

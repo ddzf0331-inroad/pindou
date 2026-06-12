@@ -319,17 +319,6 @@
         </section>
 
         <section class="panel" id="assembly-panel">
-          <header class="topbar">
-            <div>
-              <h1>拼装页</h1>
-              <p>在像素图上标记现实中已经拼好的位置，色块统计会自动扣减剩余数量。</p>
-            </div>
-            <div class="top-actions">
-              <button class="secondary" id="assemblyOpenGalleryBtn">从图库选择</button>
-              <button class="primary" id="assemblySaveProgressBtn">保存拼装进度</button>
-            </div>
-          </header>
-
           <div class="assembly-grid">
             <section class="canvas-area">
               <div class="canvas-toolbar">
@@ -342,6 +331,9 @@
                     <option value="10">10</option>
                   </select>
                 </label>
+                <button class="secondary" id="assemblyOpenGalleryBtn">从图库选择</button>
+                <button class="primary" id="assemblySaveProgressBtn">保存拼装进度</button>
+                <button class="secondary icon-action" id="assemblyStatsToggleBtn" type="button" title="收起拼装统计" aria-label="收起拼装统计">›</button>
               </div>
               <div class="canvas-scroll" id="assemblyCanvasScroll" title="先在右侧选中色块；点击同色格标记完成；拖拽框选同色格；未选中色块时可直接拖动画布">
                 <canvas id="assemblyCanvas" width="680" height="520"></canvas>
