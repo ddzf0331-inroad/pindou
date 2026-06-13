@@ -269,7 +269,7 @@ assert.strictEqual(result.stockAfterTouchTrail, 8, "touch trail should deduct ne
 assert.strictEqual(JSON.stringify(result.markedAfterTouchTrail), JSON.stringify(["0,0", "2,0"]), "touch trail should only store selected-color cells");
 assert.ok(result.summaryMarkup.includes("summary-item"), "summary should group each metric with its label");
 assert.ok(result.summaryMarkup.indexOf("已拼") < result.summaryMarkup.indexOf("剩余"), "summary should label completed before remaining");
-assert.ok(result.paletteOrderByRemaining[0].includes("02") && result.paletteOrderByRemaining[0].includes("蓝"), "palette rows should sort by remaining count descending");
+assert.ok(result.paletteOrderByRemaining[0].includes("02") && result.paletteOrderByRemaining[0].includes("0/3"), "palette rows should sort by remaining count descending");
 assert.strictEqual(JSON.stringify(result.manualSaved), JSON.stringify(["0,0", "2,0", "1,1"]), "manual save should persist current assembly marks");
 assert.ok(/^\d+\/\d+$/.test(result.manualSaveStatus), "manual save should keep the compact mobile progress status");
 assert.ok(result.completeNotice.includes("已全部完成"), "complete colors should show a completion notice");

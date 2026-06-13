@@ -878,6 +878,14 @@ canvas.crop-dragging {
   background: #fff;
 }
 
+.stock-chip {
+  justify-self: end;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
 .candidate-row {
   grid-template-columns: 52px 1fr auto;
   text-align: left;
@@ -1010,20 +1018,18 @@ canvas.crop-dragging {
 }
 
 .assembly-row {
-  grid-template-columns: 1fr auto auto;
-  padding: 8px;
+  grid-template-columns: 36px 1fr auto;
+  padding: 6px 8px;
 }
 
 .assembly-row-main {
   display: grid;
-  grid-template-columns: 28px 1fr;
-  gap: 10px;
   align-items: center;
   min-width: 0;
   padding: 0;
   color: inherit;
   background: transparent;
-  text-align: left;
+  text-align: center;
 }
 
 .assembly-row .mini-action {
@@ -1040,13 +1046,13 @@ canvas.crop-dragging {
   color: #111827;
   font-size: 11px;
   font-weight: 900;
-  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.72);
 }
 
 .assembly-stat-name {
+  display: none;
   min-width: 0;
   overflow: hidden;
-  font-weight: 800;
+  font-weight: 900;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -1081,6 +1087,7 @@ canvas.crop-dragging {
 .row-title {
   display: block;
   font-weight: 800;
+  white-space: nowrap;
 }
 
 .row-subtitle,
@@ -1140,7 +1147,7 @@ canvas.crop-dragging {
 }
 
 .palette-row {
-  grid-template-columns: 34px 1fr 92px 88px;
+  grid-template-columns: 34px minmax(42px, 1fr) auto auto;
   cursor: pointer;
 }
 
@@ -2007,11 +2014,11 @@ canvas.crop-dragging {
     right: 10px;
     bottom: calc(var(--mobile-nav-height) + 14px + env(safe-area-inset-bottom));
     z-index: 72;
-    width: min(232px, calc(100vw - 88px));
+    width: min(210px, calc(100vw - 104px));
     display: grid;
     align-content: start;
-    gap: 8px;
-    padding: 50px 10px 18px;
+    gap: 6px;
+    padding: 46px 8px 14px;
     border: 1px solid var(--line);
     border-radius: 8px;
     background: rgba(255, 255, 255, 0.98);
@@ -2061,20 +2068,20 @@ canvas.crop-dragging {
   }
 
   .assembly-stats .assembly-row {
-    grid-template-columns: minmax(0, 1fr) auto 32px;
-    min-height: 44px;
-    gap: 7px;
-    padding: 6px;
+    grid-template-columns: 32px minmax(0, 1fr) 30px;
+    min-height: 40px;
+    gap: 6px;
+    padding: 5px 6px;
   }
 
   .assembly-stats .assembly-row-main {
-    grid-template-columns: 36px minmax(0, 1fr);
-    gap: 7px;
+    grid-template-columns: 32px;
+    gap: 0;
   }
 
   .assembly-stats .assembly-stat-swatch {
-    width: 36px;
-    height: 36px;
+    width: 32px;
+    height: 32px;
     border-radius: 8px;
     font-size: 10px;
   }
@@ -2092,8 +2099,8 @@ canvas.crop-dragging {
   }
 
   .assembly-stats .mini-action {
-    width: 32px;
-    min-height: 34px;
+    width: 30px;
+    min-height: 32px;
     padding: 0;
     border-radius: 8px;
     font-size: 17px;
@@ -2213,13 +2220,13 @@ canvas.crop-dragging {
     position: fixed;
     top: calc(12px + env(safe-area-inset-top));
     right: 10px;
-    bottom: calc(var(--mobile-nav-height) + 14px + env(safe-area-inset-bottom));
     z-index: 35;
     width: min(340px, calc(100vw - 30px));
+    max-height: min(50dvh, 430px);
     display: grid;
     align-content: start;
-    gap: 10px;
-    padding: 12px;
+    gap: 8px;
+    padding: 10px;
     border: 1px solid var(--line);
     border-radius: 8px;
     background: rgba(255, 255, 255, 0.98);
@@ -2239,13 +2246,33 @@ canvas.crop-dragging {
     transform: translateX(0);
   }
 
+  .workspace-stats-head {
+    position: sticky;
+    top: -10px;
+    z-index: 3;
+    margin: -10px -10px 0;
+    padding: 8px 10px;
+    background: rgba(255, 255, 255, 0.96);
+    backdrop-filter: blur(12px);
+  }
+
   .workspace-stats-head .panel-toggle {
     display: grid;
+    flex: 0 0 auto;
   }
 
   .workspace-stats h2 {
     margin: 0;
-    font-size: 18px;
+    font-size: 16px;
+  }
+
+  .workspace-stats .compact-field,
+  .workspace-stats .tool-row,
+  .workspace-stats #cursorStatus,
+  .workspace-stats .replace-row,
+  .workspace-stats .candidate-history,
+  .workspace-stats .risk-list {
+    display: none;
   }
 
   .workspace-stats .field,
@@ -2265,10 +2292,10 @@ canvas.crop-dragging {
   }
 
   #palette-panel .palette-row {
-    grid-template-columns: 34px minmax(0, 1fr);
-    gap: 10px;
-    min-height: 50px;
-    padding: 8px 10px;
+    grid-template-columns: 30px minmax(34px, 1fr) auto auto;
+    gap: 8px;
+    min-height: 44px;
+    padding: 6px 8px;
     align-items: center;
     text-align: left;
   }
@@ -2377,24 +2404,23 @@ canvas.crop-dragging {
   }
 
   .palette-row .swatch {
-    width: 34px;
-    height: 34px;
+    width: 30px;
+    height: 30px;
   }
 
   .palette-row .row-title {
-    font-size: 15px;
+    font-size: 16px;
     line-height: 1.2;
   }
 
-  .palette-row .row-subtitle {
-    margin-top: 2px;
-    font-size: 11px;
-    line-height: 1.25;
+  .palette-row .stock-chip {
+    font-size: 12px;
   }
 
-  .palette-row .status-badge,
-  .palette-row > span:last-child {
-    display: none;
+  .palette-row .status-badge {
+    display: inline-block;
+    padding: 4px 7px;
+    font-size: 11px;
   }
 
   .used-row,
@@ -2406,31 +2432,33 @@ canvas.crop-dragging {
   }
 
   .used-row {
-    grid-template-columns: 42px minmax(0, 1fr);
-    gap: 12px;
+    grid-template-columns: 34px minmax(0, 1fr) auto;
+    gap: 8px;
+    min-height: 44px;
+    padding: 8px 10px;
   }
 
   .used-row strong {
-    grid-column: 2;
-    justify-self: start;
+    grid-column: auto;
+    justify-self: end;
     max-width: 100%;
-    padding: 3px 8px;
+    padding: 3px 7px;
     border-radius: 999px;
     color: var(--brand);
     background: #e7f1f3;
-    font-size: 13px;
+    font-size: 12px;
     line-height: 1.25;
-    white-space: normal;
+    white-space: nowrap;
   }
 
   .used-row .swatch {
-    grid-row: 1 / span 2;
-    width: 42px;
-    height: 42px;
+    grid-row: auto;
+    width: 34px;
+    height: 34px;
   }
 
-  .palette-used {
-    padding-bottom: 12px;
+  .workspace-stats .palette-used {
+    padding-bottom: 72px;
   }
 
   .used-row,

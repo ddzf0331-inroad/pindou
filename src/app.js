@@ -1334,7 +1334,7 @@ function renderPalettePlanSummary() {
     els.palettePlanSummary.textContent = `已选择 ${selected.length} 种色号`;
     els.palettePlanHint.textContent = selected
       .slice(0, 4)
-      .map((block) => `${block.code} ${block.name}`)
+      .map((block) => block.code)
       .join("、");
   }
   els.palettePlanSwatches.innerHTML = selected
@@ -1370,8 +1370,8 @@ function renderPalettePlanList() {
         <input type="checkbox" aria-label="${escapeHtml(block.code)} ${escapeHtml(block.name)}" ${isSelected ? "checked" : ""} />
         <span class="swatch" style="background:${rgbCss(block.rgb)}"></span>
         <span class="palette-plan-main">
-          <span class="row-title">${escapeHtml(block.code)} ${escapeHtml(block.name)}</span>
-          <span class="row-subtitle">${escapeHtml(rgbCss(block.rgb))}${stat ? ` · 推荐匹配 ${stat.count} 格` : ""}</span>
+          <span class="row-title">${escapeHtml(block.code)}</span>
+          <span class="row-subtitle">${stat ? `推荐 ${stat.count} 格` : `库存 ${formatStock(block.stock)}`}</span>
         </span>
         ${
           isSelected
@@ -1499,8 +1499,8 @@ function renderDashboard() {
     row.innerHTML = `
       <span class="swatch" style="background:${rgbCss(block.rgb)}"></span>
       <span>
-        <span class="row-title">${escapeHtml(block.code)} ${escapeHtml(block.name)}</span>
-        <span class="row-subtitle">库存 ${formatStock(block.stock)} 个 · 低于 ${LOW_STOCK_THRESHOLD}</span>
+        <span class="row-title">${escapeHtml(block.code)}</span>
+        <span class="row-subtitle">库存 ${formatStock(block.stock)}</span>
       </span>
       <span class="status-badge warn">补货</span>
     `;
@@ -1960,8 +1960,7 @@ function renderAssemblyStats() {
       row.className = `used-row assembly-row ${blocksMatch(selectedBlock, block) ? "active" : ""}`;
       row.innerHTML = `
         <button class="assembly-row-main" type="button">
-          <span class="assembly-stat-swatch" style="background:${rgbCss(block.rgb)}">${escapeHtml(block.code)}</span>
-          <span class="assembly-stat-name">${escapeHtml(block.name)}</span>
+          <span class="assembly-stat-swatch" style="${assemblySwatchStyle(block.rgb)}">${escapeHtml(block.code)}</span>
         </button>
         <span class="assembly-progress-chip">${item.marked}/${item.total}</span>
         <button class="mini-action locate-action" type="button" data-action="locate" aria-label="定位 ${escapeHtml(block.code)}">⌖</button>
@@ -1973,6 +1972,15 @@ function renderAssemblyStats() {
       row.querySelector("[data-action='locate']").addEventListener("click", () => locateAssemblyBlock(block.id));
       els.assemblyUsedPalette.appendChild(row);
     });
+}
+
+function assemblySwatchStyle(rgb) {
+  const useDarkText = luminance(rgb) > 0.52;
+  return [
+    `background:${rgbCss(rgb)}`,
+    `color:${useDarkText ? "#111827" : "#ffffff"}`,
+    `text-shadow:${useDarkText ? "0 1px 2px rgba(255,255,255,0.72)" : "0 1px 2px rgba(0,0,0,0.85), 0 0 2px rgba(0,0,0,0.7)"}`
+  ].join(";");
 }
 
 function countAssemblyBlocks() {
@@ -3052,8 +3060,8 @@ function renderStats() {
     row.className = `used-row ${blocksMatch(selectedBlock, block) ? "active" : ""}`;
     row.innerHTML = `
       <span class="swatch" style="background:${rgbCss(block.rgb)}"></span>
-      <span><span class="row-title">${escapeHtml(block.code)} ${escapeHtml(block.name)}</span><span class="row-subtitle">${rgbCss(block.rgb)}</span></span>
-      <strong>${counts.get(block.id)} 块</strong>
+      <span><span class="row-title">${escapeHtml(block.code)}</span><span class="row-subtitle">${counts.get(block.id)} 块</span></span>
+      <strong>${counts.get(block.id)}</strong>
     `;
     row.addEventListener("click", () => {
       state.selectedBlockId = state.selectedBlockId === block.id ? null : block.id;
@@ -3721,11 +3729,11 @@ function renderPaletteEditor() {
     row.className = `palette-row ${state.editingBlockId === block.id ? "active" : ""}`;
     row.innerHTML = `
       <span class="swatch" style="background:${rgbCss(block.rgb)}"></span>
-      <span><span class="row-title">${escapeHtml(block.code)} ${escapeHtml(block.name)}</span><span class="row-subtitle">${rgbCss(block.rgb)} · 库存 ${formatStock(block.stock)}</span></span>
+      <span class="row-title">${escapeHtml(block.code)}</span>
+      <span class="stock-chip">库存 ${formatStock(block.stock)}</span>
       <span class="status-badge ${block.status !== "active" ? "disabled" : normalizeStock(block.stock) < LOW_STOCK_THRESHOLD ? "warn" : ""}">${
         block.status !== "active" ? statusLabel(block.status) : normalizeStock(block.stock) < LOW_STOCK_THRESHOLD ? "低库存" : "可用"
       }</span>
-      <span>${escapeHtml(block.id)}</span>
     `;
     row.addEventListener("click", () => {
       state.editingBlockId = block.id;
