@@ -313,7 +313,67 @@ async function handleApi(req, res, url, config = DEFAULT_CONFIG) {
     return;
   }
 
+  if (req.method === "POST" && url.pathname === "/api/parse-pattern-sheet") {
+    const body = await readBody(req);
+    const result = await parsePatternSheet(body, config);
+    sendJson(res, result.ok ? 200 : 400, result);
+    return;
+  }
+
   sendJson(res, 404, { error: "Not found" });
+}
+
+async function parsePatternSheet(body, config = DEFAULT_CONFIG) {
+  if (!body?.imageDataUrl) return { ok: false, message: "没有收到图纸图片。" };
+  if (!Array.isArray(body.palette) || !body.palette.length) return { ok: false, message: "没有可用色块库，无法解析图纸。" };
+  const scriptPath = path.join(config.rootDir, "scripts", "parse-pattern-sheet.py");
+  if (!fs.existsSync(scriptPath)) return { ok: false, message: "图纸解析脚本不存在。" };
+  const payload = JSON.stringify({
+    imageDataUrl: body.imageDataUrl,
+    palette: body.palette,
+    expectedWidth: Number(body.expectedWidth) || null,
+    expectedHeight: Number(body.expectedHeight) || null
+  });
+  return runPythonJson(scriptPath, payload, 90000);
+}
+
+function runPythonJson(scriptPath, payload, timeoutMs = 30000) {
+  return new Promise((resolve) => {
+    const child = spawn("python3", [scriptPath], { stdio: ["pipe", "pipe", "pipe"] });
+    let stdout = "";
+    let stderr = "";
+    let settled = false;
+    const timer = setTimeout(() => {
+      if (settled) return;
+      settled = true;
+      child.kill("SIGKILL");
+      resolve({ ok: false, message: "图纸解析超时，请尝试更清晰或更小的图片。" });
+    }, timeoutMs);
+    child.stdout.on("data", (chunk) => {
+      stdout += chunk.toString();
+    });
+    child.stderr.on("data", (chunk) => {
+      stderr += chunk.toString();
+    });
+    child.on("error", (error) => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timer);
+      resolve({ ok: false, message: `无法启动本地图纸解析：${error.message}` });
+    });
+    child.on("close", () => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timer);
+      try {
+        const payload = JSON.parse(stdout || "{}");
+        resolve(payload.ok === false ? payload : { ...payload, ok: true });
+      } catch {
+        resolve({ ok: false, message: stderr.trim() || "图纸解析返回格式无法识别。" });
+      }
+    });
+    child.stdin.end(payload);
+  });
 }
 
 async function cartoonizeImage(imageDataUrl, settings) {
@@ -571,6 +631,7 @@ module.exports = {
   handleApi,
   isAuthenticated,
   cartoonizeImage,
+  parsePatternSheet,
   normalizeImageResponse,
   normalizeSettings,
   mergeSettings,

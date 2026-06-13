@@ -60,6 +60,7 @@ const state = {
   candidateStatus: "empty",
   candidates: [],
   projectPaletteSnapshot: null,
+  patternParse: null,
   risks: [],
   generationPaletteIds: new Set(loadJson(STORAGE_KEYS.ui, {}).generationPaletteIds || []),
   generationPaletteStats: new Map(),
@@ -153,6 +154,9 @@ function bindElements() {
     "controlPanelToggle",
     "runtimeBanner",
     "sampleImageBtn",
+    "parsePatternSheetBtn",
+    "patternSheetInput",
+    "patternParseNotice",
     "migrateLocalBtn",
     "projectName",
     "pixelWidth",
@@ -361,6 +365,15 @@ function bindEvents() {
 
   els.imageInput.addEventListener("change", handleImageInput);
   els.sampleImageBtn.addEventListener("click", useSampleImage);
+  els.parsePatternSheetBtn.addEventListener("click", () => {
+    if (!state.serverMode) {
+      els.patternParseNotice.textContent = "图纸解析需要通过本机服务或私有网页版使用，静态 file 模式暂不支持。";
+      showAppFeedback("请通过服务地址使用图纸解析", "warn");
+      return;
+    }
+    els.patternSheetInput.click();
+  });
+  els.patternSheetInput.addEventListener("change", handlePatternSheetInput);
   els.migrateLocalBtn.addEventListener("click", migrateLocalStorageToServer);
   els.presetSelect.addEventListener("change", () => {
     const [width, height] = els.presetSelect.value.split("x").map(Number);
@@ -773,9 +786,13 @@ function setSourceImage(image, name) {
   state.candidateStatus = "empty";
   state.candidates = [];
   state.projectPaletteSnapshot = null;
+  state.patternParse = null;
   state.history = [];
   state.selectedBlockId = null;
   state.risks = [];
+  if (els.patternParseNotice) {
+    els.patternParseNotice.textContent = "可导入别人的图纸，解析上半部分网格后还原为当前图库格式。";
+  }
   els.matrixStatus.textContent = `已导入 ${name}`;
   renderStats();
   drawSourcePreview();
@@ -813,6 +830,126 @@ function useSampleImage() {
     setSourceImage(image, "示例笑脸.png");
   };
   image.src = canvas.toDataURL("image/png");
+}
+
+async function handlePatternSheetInput(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  try {
+    if (!state.serverMode) {
+      els.patternParseNotice.textContent = "图纸解析需要通过本机服务或私有网页版使用，静态 file 模式暂不支持。";
+      showAppFeedback("请通过服务地址使用图纸解析", "warn");
+      return;
+    }
+    const palette = state.palette.filter((block) => block.status !== "deleted").map(normalizeBlock).filter(Boolean);
+    if (!palette.length) {
+      els.patternParseNotice.textContent = "色块库为空，无法解析图纸。";
+      showAppFeedback("色块库为空", "warn");
+      return;
+    }
+    els.patternParseNotice.textContent = "正在解析图纸上半部分网格...";
+    els.matrixStatus.textContent = "正在解析图纸...";
+    const imageDataUrl = await readFileAsDataUrl(file);
+    const result = await apiRequest("/api/parse-pattern-sheet", {
+      method: "POST",
+      body: {
+        imageDataUrl,
+        palette,
+        expectedWidth: Number(els.pixelWidth.value) || 50,
+        expectedHeight: Number(els.pixelHeight.value) || 50
+      }
+    });
+    if (!result?.ok) {
+      const message = result?.message || "图纸解析失败，请换一张更清晰的图纸。";
+      els.patternParseNotice.textContent = message;
+      els.matrixStatus.textContent = message;
+      showAppFeedback("图纸解析失败", "error");
+      return;
+    }
+    applyPatternSheetResult(result, file.name);
+  } catch (error) {
+    const message = error?.message || "图纸解析失败，请换一张更清晰的图纸。";
+    els.patternParseNotice.textContent = message;
+    els.matrixStatus.textContent = message;
+    showAppFeedback("图纸解析失败", "error");
+  } finally {
+    event.target.value = "";
+  }
+}
+
+function applyPatternSheetResult(result, fileName) {
+  const matrix = result.matrix;
+  if (!matrix?.width || !matrix?.height || !Array.isArray(matrix.rows)) {
+    throw new Error("图纸解析结果格式不正确。");
+  }
+  const rows = matrix.rows.map((row) => row.map(String));
+  if (rows.length !== matrix.height || rows.some((row) => row.length !== matrix.width)) {
+    throw new Error("图纸解析结果尺寸不一致。");
+  }
+
+  const paletteSnapshot = (Array.isArray(result.paletteSnapshot) && result.paletteSnapshot.length ? result.paletteSnapshot : state.palette)
+    .map(normalizeBlock)
+    .filter(Boolean);
+  const failures = Array.isArray(result.failures) ? result.failures : [];
+  const lowConfidenceCells = Array.isArray(result.lowConfidenceCells) ? result.lowConfidenceCells : [];
+
+  state.image = null;
+  state.sourceName = fileName;
+  state.currentProjectId = null;
+  state.matrix = { width: Number(matrix.width), height: Number(matrix.height), rows };
+  state.projectPaletteSnapshot = paletteSnapshot;
+  state.patternParse = {
+    failures,
+    lowConfidenceCells,
+    method: result.method || "local-grid-color-match",
+    stats: result.stats || {}
+  };
+  state.candidateStatus = "pending";
+  state.candidates = [];
+  state.history = [];
+  state.selectedBlockId = null;
+  state.paintBlockId = getFirstUsedBlockId(state.matrix, paletteSnapshot);
+  state.risks = summarizeRisks(
+    lowConfidenceCells.map((cell) => ({
+      x: cell.x,
+      y: cell.y,
+      source: cell.source || [0, 0, 0],
+      blockId: String(cell.blockId),
+      distance: Number(cell.distance) || 0
+    }))
+  );
+  state.zoom = Math.max(state.zoom, state.matrix.width <= 50 ? 12 : 8);
+  els.projectName.value = fileName.replace(/\.[^.]+$/, "") || "解析图纸";
+  els.pixelWidth.value = state.matrix.width;
+  els.pixelHeight.value = state.matrix.height;
+  const presetValue = `${state.matrix.width}x${state.matrix.height}`;
+  if ([...els.presetSelect.options].some((option) => option.value === presetValue)) {
+    els.presetSelect.value = presetValue;
+  }
+  addCandidateSnapshot();
+  syncZoomControls();
+  renderCanvas();
+  renderStats();
+  renderCandidateHistory();
+
+  const stats = state.patternParse.stats;
+  const detected = stats.detectedWidth && stats.detectedHeight ? `检测原图 ${stats.detectedWidth} x ${stats.detectedHeight}` : "";
+  const placement =
+    stats.contentOffsetX || stats.contentOffsetY
+      ? `，已放入 ${state.matrix.width} x ${state.matrix.height} 画板并留边 ${stats.contentOffsetX || 0} 格`
+      : "";
+  const riskText = lowConfidenceCells.length ? `，${lowConfidenceCells.length} 格颜色差异较大` : "";
+  const failText = failures.length ? `，${failures.length} 格需要修正后才能采纳` : "";
+  els.matrixStatus.textContent = failures.length
+    ? `图纸解析完成，但有 ${failures.length} 格需要修正`
+    : `${state.matrix.width} x ${state.matrix.height}，图纸解析完成，等待采纳`;
+  els.patternParseNotice.textContent = `${detected || "图纸已解析"}${placement}${riskText}${failText}。`;
+  showAppFeedback("图纸解析完成");
+}
+
+function getFirstUsedBlockId(matrix, palette) {
+  const usedIds = new Set(matrix.rows.flat().map(String));
+  return palette.find((block) => usedIds.has(block.id) && block.status === "active")?.id || palette.find((block) => usedIds.has(block.id))?.id || null;
 }
 
 function drawSourcePreview() {
@@ -925,6 +1062,7 @@ async function generatePixelArt() {
   state.candidateStatus = "pending";
   addCandidateSnapshot();
   state.projectPaletteSnapshot = null;
+  state.patternParse = null;
   state.risks = summarizeRisks(risks);
   state.selectedBlockId = null;
   state.paintBlockId = generationPaletteLab[0]?.id || activePalette[0]?.id || null;
@@ -3077,6 +3215,11 @@ function saveProject() {
     showAppFeedback("请先生成像素画", "warn");
     return;
   }
+  if (state.patternParse?.failures?.length) {
+    els.matrixStatus.textContent = `图纸还有 ${state.patternParse.failures.length} 格未识别，修正后才能采纳`;
+    showAppFeedback("图纸还有未识别格", "warn");
+    return;
+  }
 
   const name = els.projectName.value.trim() || (state.sourceName ? state.sourceName.replace(/\.[^.]+$/, "") : "未命名作品");
   const existingProject = state.projects.find((item) => item.id === state.currentProjectId);
@@ -3466,6 +3609,15 @@ function readJsonFile(file) {
     };
     reader.onerror = reject;
     reader.readAsText(file);
+  });
+}
+
+function readFileAsDataUrl(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result || ""));
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
   });
 }
 

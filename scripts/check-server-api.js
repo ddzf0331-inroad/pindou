@@ -46,6 +46,11 @@ async function main() {
     const ai = await request("POST", "/api/test-ai", { body: {} });
     assert.strictEqual(ai.ok, true, "local AI config should pass test");
 
+    const patternMissingImage = await rawRequest("POST", "/api/parse-pattern-sheet", {
+      body: { palette: [{ id: "c1", code: "A1", name: "白", rgb: [255, 255, 255], status: "active" }] }
+    });
+    assert.strictEqual(patternMissingImage.statusCode, 400, "pattern sheet parser should reject missing image");
+
     const diagnostics = await request("GET", "/api/diagnostics");
     assert.strictEqual(diagnostics.mode, "node-local-server", "diagnostics should report node mode");
     assert.strictEqual(diagnostics.dataFiles.palette, true, "diagnostics should see palette file");

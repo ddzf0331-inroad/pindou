@@ -101,7 +101,10 @@
                 </label>
                 <div class="top-actions stacked-actions">
                   <button class="secondary" id="sampleImageBtn">使用示例图</button>
+                  <button class="secondary" id="parsePatternSheetBtn" type="button">解析图纸</button>
                 </div>
+                <input class="hidden-file" id="patternSheetInput" type="file" accept="image/png,image/jpeg,image/webp" />
+                <div class="notice subtle" id="patternParseNotice">可导入别人的图纸，解析上半部分网格后还原为当前图库格式。</div>
 
                 <div class="field">
                   <label for="projectName">作品名称</label>
