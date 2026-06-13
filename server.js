@@ -339,7 +339,8 @@ async function parsePatternSheet(body, config = DEFAULT_CONFIG) {
 
 function runPythonJson(scriptPath, payload, timeoutMs = 30000) {
   return new Promise((resolve) => {
-    const child = spawn("python3", [scriptPath], { stdio: ["pipe", "pipe", "pipe"] });
+    const pythonBin = getPythonBin();
+    const child = spawn(pythonBin, [scriptPath], { stdio: ["pipe", "pipe", "pipe"] });
     let stdout = "";
     let stderr = "";
     let settled = false;
@@ -359,7 +360,7 @@ function runPythonJson(scriptPath, payload, timeoutMs = 30000) {
       if (settled) return;
       settled = true;
       clearTimeout(timer);
-      resolve({ ok: false, message: `无法启动本地图纸解析：${error.message}` });
+      resolve({ ok: false, message: `无法启动本地图纸解析：${pythonBin}，${error.message}` });
     });
     child.on("close", () => {
       if (settled) return;
@@ -374,6 +375,14 @@ function runPythonJson(scriptPath, payload, timeoutMs = 30000) {
     });
     child.stdin.end(payload);
   });
+}
+
+function getPythonBin() {
+  if (process.env.PIXEL_TOY_PYTHON) return process.env.PIXEL_TOY_PYTHON;
+  if (process.env.PYTHON_PATH) return process.env.PYTHON_PATH;
+  const serverVenvPython = "/opt/pindou/venv/bin/python";
+  if (fs.existsSync(serverVenvPython)) return serverVenvPython;
+  return "python3";
 }
 
 async function cartoonizeImage(imageDataUrl, settings) {
