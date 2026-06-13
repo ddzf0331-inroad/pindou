@@ -37,7 +37,7 @@
         <button class="rail-toggle icon-toggle" id="railCollapseBtn" title="收起菜单" aria-label="收起菜单">‹</button>
         <nav class="nav">
           <button class="nav-item active" data-panel="dashboard" data-short="首">首页</button>
-          <button class="nav-item" data-panel="workspace" data-short="工">工作台</button>
+          <button class="nav-item" data-panel="workspace" data-short="生">生成图纸</button>
           <button class="nav-item" data-panel="palette" data-short="色">色块库</button>
           <button class="nav-item" data-panel="gallery" data-short="图">图库</button>
           <button class="nav-item" data-panel="assembly" data-short="拼">拼装页</button>
@@ -77,8 +77,8 @@
         <section class="panel" id="workspace-panel">
           <header class="topbar">
             <div>
-              <h1>图片转实体色块像素画</h1>
-              <p>AI 只负责照片卡通化，本地完成像素化、色块匹配与生产导出。</p>
+              <h1>生成图纸</h1>
+              <p>上传素材图片或解析外部图纸，生成可拼装的色块像素图。</p>
             </div>
             <div class="top-actions">
               <button class="secondary" id="regenerateBtn">重新生成</button>
@@ -90,33 +90,23 @@
           <div class="workspace-grid" id="workspaceGrid">
             <section class="control-panel" id="controlPanel">
               <div class="control-panel-header">
-                <strong>上传与配置</strong>
-                <button class="panel-toggle icon-toggle" id="controlPanelToggle" title="收起配置" aria-label="收起配置">‹</button>
+                <strong>上传素材</strong>
+                <button class="panel-toggle icon-toggle" id="controlPanelToggle" title="收起上传素材" aria-label="收起上传素材">‹</button>
               </div>
               <div class="control-panel-body">
                 <label class="file-drop" for="imageInput">
                   <input id="imageInput" type="file" accept="image/*" />
-                  <span>导入真实照片或卡通图</span>
-                  <small>PNG / JPG / WebP</small>
+                  <span>导入素材图片</span>
                 </label>
                 <div class="top-actions stacked-actions">
-                  <button class="secondary" id="sampleImageBtn">使用示例图</button>
                   <button class="secondary" id="parsePatternSheetBtn" type="button">解析图纸</button>
                 </div>
                 <input class="hidden-file" id="patternSheetInput" type="file" accept="image/png,image/jpeg,image/webp" />
-                <div class="notice subtle" id="patternParseNotice">可导入别人的图纸，解析上半部分网格后还原为当前图库格式。</div>
+                <div class="notice subtle" id="patternParseNotice" hidden></div>
 
                 <div class="field">
                   <label for="projectName">作品名称</label>
                   <input id="projectName" type="text" maxlength="40" placeholder="导入图片后自动填入" />
-                </div>
-
-                <div class="field">
-                  <label>输入类型</label>
-                  <div class="segmented">
-                    <button class="segment active" data-input-type="cartoon">卡通图</button>
-                    <button class="segment" data-input-type="photo">真实照片</button>
-                  </div>
                 </div>
 
                 <div class="field two-col">
@@ -139,7 +129,7 @@
                 </div>
 
                 <div class="field">
-                  <label for="maxColorTypes">最多使用色块种类</label>
+                  <label for="maxColorTypes">使用色号数量</label>
                   <input id="maxColorTypes" type="number" min="1" max="999" placeholder="不填则使用全部可用色块" />
                   <small class="field-hint" id="maxColorTypesHint">生成结果会限制在该数量以内。</small>
                 </div>
@@ -175,23 +165,13 @@
                   <span id="zoomValue">10px/格</span>
                 </div>
 
-                <div class="field">
-                  <label for="deltaThreshold">替代色提醒阈值 Delta E</label>
-                  <input id="deltaThreshold" type="range" min="8" max="60" value="28" />
-                  <div class="range-row">
-                    <span>严格</span>
-                    <strong id="thresholdValue">28</strong>
-                    <span>宽松</span>
-                  </div>
-                </div>
-
                 <div class="toggle-row">
                   <label><input type="checkbox" id="gridToggle" checked /> 网格</label>
-                  <label><input type="checkbox" id="labelToggle" /> 编号</label>
+                  <label><input type="checkbox" id="labelToggle" checked /> 编号</label>
                 </div>
 
                 <button class="primary full" id="generateBtn">生成像素画</button>
-                <div class="notice" id="pipelineNotice">卡通图将直接进行本地像素化。</div>
+                <div class="notice" id="pipelineNotice">素材图会进行本地像素化，并匹配到当前色块库。</div>
               </div>
             </section>
 
@@ -232,8 +212,8 @@
             </aside>
           </div>
 
-          <div class="mobile-workspace-fabs" aria-label="工作台快捷操作">
-            <button class="workspace-fab secondary-fab" id="workspaceConfigFab" type="button">配置</button>
+          <div class="mobile-workspace-fabs" aria-label="生成图纸快捷操作">
+            <button class="workspace-fab secondary-fab" id="workspaceConfigFab" type="button">上传素材</button>
             <button class="workspace-fab secondary-fab" id="workspaceStatsFab" type="button">统计</button>
             <button class="workspace-fab primary-fab" id="workspaceActionsFab" type="button">结果</button>
           </div>

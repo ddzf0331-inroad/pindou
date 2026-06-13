@@ -40,6 +40,7 @@ const DEFAULT_SETTINGS = {
 };
 
 const LOW_STOCK_THRESHOLD = 100;
+const DEFAULT_DELTA_THRESHOLD = 28;
 let appFeedbackTimer = null;
 
 const state = {
@@ -72,7 +73,7 @@ const state = {
   history: [],
   zoom: 10,
   showGrid: true,
-  showLabels: false,
+  showLabels: true,
   cropMode: "cover",
   cropZoom: 100,
   cropX: 0,
@@ -153,7 +154,6 @@ function bindElements() {
     "controlPanel",
     "controlPanelToggle",
     "runtimeBanner",
-    "sampleImageBtn",
     "parsePatternSheetBtn",
     "patternSheetInput",
     "patternParseNotice",
@@ -184,8 +184,6 @@ function bindElements() {
     "cropXValue",
     "cropY",
     "cropYValue",
-    "deltaThreshold",
-    "thresholdValue",
     "zoomRange",
     "zoomValue",
     "gridToggle",
@@ -355,19 +353,10 @@ function bindEvents() {
     updateUiLayout();
   });
 
-  document.querySelectorAll(".segment").forEach((button) => {
-    button.addEventListener("click", () => {
-      state.inputType = button.dataset.inputType;
-      document.querySelectorAll(".segment").forEach((item) => item.classList.toggle("active", item === button));
-      updatePipelineNotice();
-    });
-  });
-
   els.imageInput.addEventListener("change", handleImageInput);
-  els.sampleImageBtn.addEventListener("click", useSampleImage);
   els.parsePatternSheetBtn.addEventListener("click", () => {
     if (!state.serverMode) {
-      els.patternParseNotice.textContent = "图纸解析需要通过本机服务或私有网页版使用，静态 file 模式暂不支持。";
+      setPatternParseNotice("图纸解析需要通过本机服务或私有网页版使用，静态 file 模式暂不支持。");
       showAppFeedback("请通过服务地址使用图纸解析", "warn");
       return;
     }
@@ -414,10 +403,6 @@ function bindEvents() {
       updateCropLabels();
       drawSourcePreview();
     });
-  });
-
-  els.deltaThreshold.addEventListener("input", () => {
-    els.thresholdValue.textContent = els.deltaThreshold.value;
   });
 
   els.zoomRange.addEventListener("input", () => {
@@ -790,12 +775,16 @@ function setSourceImage(image, name) {
   state.history = [];
   state.selectedBlockId = null;
   state.risks = [];
-  if (els.patternParseNotice) {
-    els.patternParseNotice.textContent = "可导入别人的图纸，解析上半部分网格后还原为当前图库格式。";
-  }
+  setPatternParseNotice("");
   els.matrixStatus.textContent = `已导入 ${name}`;
   renderStats();
   drawSourcePreview();
+}
+
+function setPatternParseNotice(message) {
+  if (!els.patternParseNotice) return;
+  els.patternParseNotice.textContent = message || "";
+  els.patternParseNotice.hidden = !message;
 }
 
 function useSampleImage() {
@@ -837,17 +826,17 @@ async function handlePatternSheetInput(event) {
   if (!file) return;
   try {
     if (!state.serverMode) {
-      els.patternParseNotice.textContent = "图纸解析需要通过本机服务或私有网页版使用，静态 file 模式暂不支持。";
+      setPatternParseNotice("图纸解析需要通过本机服务或私有网页版使用，静态 file 模式暂不支持。");
       showAppFeedback("请通过服务地址使用图纸解析", "warn");
       return;
     }
     const palette = state.palette.filter((block) => block.status !== "deleted").map(normalizeBlock).filter(Boolean);
     if (!palette.length) {
-      els.patternParseNotice.textContent = "色块库为空，无法解析图纸。";
+      setPatternParseNotice("色块库为空，无法解析图纸。");
       showAppFeedback("色块库为空", "warn");
       return;
     }
-    els.patternParseNotice.textContent = "正在解析图纸上半部分网格...";
+    setPatternParseNotice("正在解析图纸上半部分网格...");
     els.matrixStatus.textContent = "正在解析图纸...";
     const imageDataUrl = await readFileAsDataUrl(file);
     const result = await apiRequest("/api/parse-pattern-sheet", {
@@ -861,7 +850,7 @@ async function handlePatternSheetInput(event) {
     });
     if (!result?.ok) {
       const message = result?.message || "图纸解析失败，请换一张更清晰的图纸。";
-      els.patternParseNotice.textContent = message;
+      setPatternParseNotice(message);
       els.matrixStatus.textContent = message;
       showAppFeedback("图纸解析失败", "error");
       return;
@@ -869,7 +858,7 @@ async function handlePatternSheetInput(event) {
     applyPatternSheetResult(result, file.name);
   } catch (error) {
     const message = error?.message || "图纸解析失败，请换一张更清晰的图纸。";
-    els.patternParseNotice.textContent = message;
+    setPatternParseNotice(message);
     els.matrixStatus.textContent = message;
     showAppFeedback("图纸解析失败", "error");
   } finally {
@@ -943,7 +932,7 @@ function applyPatternSheetResult(result, fileName) {
   els.matrixStatus.textContent = failures.length
     ? `图纸解析完成，但有 ${failures.length} 格需要修正`
     : `${state.matrix.width} x ${state.matrix.height}，图纸解析完成，等待采纳`;
-  els.patternParseNotice.textContent = `${detected || "图纸已解析"}${placement}${riskText}${failText}。`;
+  setPatternParseNotice(`${detected || "图纸已解析"}${placement}${riskText}${failText}。`);
   showAppFeedback("图纸解析完成");
 }
 
@@ -1025,7 +1014,7 @@ async function generatePixelArt() {
 
   const width = clamp(Number(els.pixelWidth.value), 16, 192);
   const height = clamp(Number(els.pixelHeight.value), 16, 192);
-  const threshold = Number(els.deltaThreshold.value);
+  const threshold = DEFAULT_DELTA_THRESHOLD;
   const activePalette = state.palette.filter((block) => block.status === "active");
   const selectedPalette = getSelectedGenerationPalette(activePalette);
   const useExplicitPalette = selectedPalette.length > 0;
@@ -1464,8 +1453,9 @@ function summarizeRisks(risks) {
 }
 
 function renderAll() {
-  els.thresholdValue.textContent = els.deltaThreshold.value;
   els.maxColorTypes.value = state.ui.maxColorTypes || "";
+  els.gridToggle.checked = state.showGrid;
+  els.labelToggle.checked = state.showLabels;
   syncZoomControls();
   updateCropLabels();
   updateMaxColorTypesHint();
@@ -1588,7 +1578,7 @@ function updateUiLayout() {
   els.railCollapseBtn.title = state.ui.railCollapsed ? "展开菜单" : "收起菜单";
   els.railCollapseBtn.setAttribute("aria-label", els.railCollapseBtn.title);
   els.controlPanelToggle.textContent = state.ui.controlPanelCollapsed ? "›" : "‹";
-  els.controlPanelToggle.title = state.ui.controlPanelCollapsed ? "展开上传与生成配置" : "收起上传与生成配置";
+  els.controlPanelToggle.title = state.ui.controlPanelCollapsed ? "展开上传素材" : "收起上传素材";
   els.controlPanelToggle.setAttribute("aria-label", els.controlPanelToggle.title);
   if (els.assemblyStatsToggleBtn) {
     els.assemblyStatsToggleBtn.textContent = state.ui.assemblyStatsCollapsed ? "‹" : "›";
@@ -1645,13 +1635,7 @@ function setCanvasZoom(value) {
 }
 
 function updatePipelineNotice() {
-  if (state.inputType !== "photo") {
-    els.pipelineNotice.textContent = "卡通图将直接进行本地像素化。";
-    return;
-  }
-  els.pipelineNotice.textContent = state.serverMode
-    ? "真实照片会优先使用已启用的云端模型卡通化；未启用或调用失败时自动回退到本地预处理。"
-    : "静态版无法直接调用云端模型，真实照片会使用本地预处理。";
+  els.pipelineNotice.textContent = "素材图会进行本地像素化，并匹配到当前色块库。";
 }
 
 function renderCanvas() {
@@ -2025,6 +2009,28 @@ function adjustInventoryForAssemblyChanges(changes) {
   });
   if (changed) savePalette();
   return changed;
+}
+
+function adjustInventoryForProjectChanges(changes, paletteSnapshot = []) {
+  if (!changes?.size) return false;
+  const snapshot = Array.isArray(paletteSnapshot) ? paletteSnapshot : [];
+  let changed = false;
+  changes.forEach((delta, blockId) => {
+    const block = findInventoryBlockForProjectBlock(blockId, snapshot);
+    if (!block || !delta) return;
+    block.stock = Math.max(0, normalizeStock(block.stock) + delta);
+    changed = true;
+  });
+  if (changed) savePalette();
+  return changed;
+}
+
+function findInventoryBlockForProjectBlock(blockId, paletteSnapshot = []) {
+  const direct = state.palette.find((block) => block.id === blockId);
+  if (direct) return direct;
+  const snapshotBlock = paletteSnapshot.find((block) => block.id === blockId);
+  if (!snapshotBlock) return null;
+  return state.palette.find((block) => blocksMatch(block, snapshotBlock)) || null;
 }
 
 function findInventoryBlockForAssemblyId(blockId) {
@@ -3939,13 +3945,18 @@ function renderGallery() {
         <span class="card-actions">
           <button class="mini-action" data-action="open">打开</button>
           <button class="mini-action" data-action="assembly">${progress.marked ? "继续拼装" : "开始拼装"}</button>
+          <button class="mini-action danger-action" data-action="complete" ${progress.remaining ? "" : "disabled"}>${
+      progress.remaining ? "一键完成" : "已完成"
+    }</button>
           <button class="mini-action" data-action="export">导出</button>
           <button class="mini-action" data-action="delete">删除</button>
         </span>
       </span>
     `;
     card.addEventListener("click", (event) => {
-      const action = event.target?.dataset?.action;
+      const actionButton = event.target?.closest?.("[data-action]");
+      if (actionButton?.disabled) return;
+      const action = actionButton?.dataset?.action;
       if (action === "export") {
         exportProject(project);
         return;
@@ -3958,12 +3969,70 @@ function renderGallery() {
         openAssemblyProject(project);
         return;
       }
+      if (action === "complete") {
+        completeProjectAssembly(project);
+        return;
+      }
       if (action === "open" || event.target === card || card.contains(event.target)) {
         openProject(project);
       }
     });
     els.galleryGrid.appendChild(card);
   });
+}
+
+function completeProjectAssembly(project) {
+  if (!project?.pixelMatrix) return;
+  const matrix = decompressMatrix(project.pixelMatrix);
+  const progress = normalizeAssemblyProgress(project.assemblyProgress, matrix);
+  const marked = new Set(progress.marked);
+  const allKeys = [];
+  const inventoryChanges = new Map();
+  let newlyMarked = 0;
+
+  matrix.rows.forEach((row, y) => {
+    row.forEach((blockId, x) => {
+      const key = assemblyKey(x, y);
+      allKeys.push(key);
+      if (marked.has(key)) return;
+      newlyMarked += 1;
+      inventoryChanges.set(blockId, (inventoryChanges.get(blockId) || 0) - 1);
+    });
+  });
+
+  if (!newlyMarked) {
+    showAppFeedback("该作品已经拼装完成");
+    return;
+  }
+
+  const usedColorCount = inventoryChanges.size;
+  const ok = window.confirm(
+    `确定将“${project.name}”标记为拼装完成？\n\n将新增完成 ${newlyMarked} 格，涉及 ${usedColorCount} 种色块，并自动扣减色块库库存。库存不会低于 0。`
+  );
+  if (!ok) return;
+
+  project.assemblyProgress = {
+    version: 1,
+    marked: sortAssemblyKeys(allKeys, matrix),
+    updatedAt: new Date().toISOString()
+  };
+  project.updatedAt = project.assemblyProgress.updatedAt;
+  adjustInventoryForProjectChanges(inventoryChanges, project.paletteSnapshot || []);
+  saveProjects();
+
+  if (state.assemblyProjectId === project.id) {
+    state.assemblyMatrix = matrix;
+    state.assemblyPaletteSnapshot = project.paletteSnapshot || [];
+    state.assemblyMarked = new Set(project.assemblyProgress.marked);
+    state.assemblyLocatedCell = null;
+    renderAssemblyPage();
+  }
+
+  renderGallery();
+  renderPaletteEditor();
+  renderStats();
+  renderDashboard();
+  showAppFeedback(`已完成 ${newlyMarked} 格并扣减库存`);
 }
 
 function openProject(project) {
