@@ -245,10 +245,17 @@ def build_matrix_from_text_ocr(image, bbox, palette, width, height):
         }
 
     palette_by_code = {block["code"]: block for block in palette}
+    raw_ocr_votes = collect_grid_ocr_votes(tesseract, image, bbox, width, height, palette_by_code)
+    sheet_codes = detect_sheet_palette_codes(tesseract, image, bbox, palette_by_code, palette)
+    sheet_codes.update(get_strong_grid_ocr_codes(raw_ocr_votes))
+    if len(sheet_codes) >= 4:
+        sheet_codes.add(find_blank_block(palette)["code"])
+    parse_palette = [block for block in palette if block["code"] in sheet_codes] if len(sheet_codes) >= 4 else palette
+    parse_palette_by_code = {block["code"]: block for block in parse_palette}
     cell_rgbs = sample_cell_rgbs(image, bbox, width, height)
     cluster_count = estimate_cluster_count(image, bbox, width, height)
     labels, centers = cluster_cell_colors(cell_rgbs, cluster_count)
-    ocr_votes = collect_grid_ocr_votes(tesseract, image, bbox, width, height, palette_by_code)
+    ocr_votes = filter_ocr_votes(raw_ocr_votes, sheet_codes) if len(sheet_codes) >= 4 else raw_ocr_votes
     cluster_votes = [dict() for _ in range(cluster_count)]
     for index, votes in enumerate(ocr_votes):
         if not votes:
@@ -260,7 +267,6 @@ def build_matrix_from_text_ocr(image, bbox, palette, width, height):
 
     cluster_codes = []
     inferred_clusters = set()
-    ocr_confirmed = 0
     for cluster_index in range(cluster_count):
         total = int(np.count_nonzero(labels == cluster_index))
         votes = cluster_votes[cluster_index]
@@ -269,38 +275,51 @@ def build_matrix_from_text_ocr(image, bbox, palette, width, height):
             code, vote_count = sorted(votes.items(), key=lambda item: item[1], reverse=True)[0]
             if vote_count < max(2, total * 0.06):
                 code = None
-        if code:
-            ocr_confirmed += total
-        else:
-            _, nearest = nearest_palette(centers[cluster_index].tolist(), palette)
+        if not code:
+            _, nearest = nearest_palette(centers[cluster_index].tolist(), parse_palette)
             code = nearest["code"]
             inferred_clusters.add(cluster_index)
-        code = correct_code_by_cluster_color(code, centers[cluster_index], palette_by_code)
+        code = correct_code_by_cluster_color(code, centers[cluster_index], parse_palette_by_code)
         cluster_codes.append(code)
 
     rows = []
-    low_confidence = []
+    choices_grid = []
+    direct_ocr_confirmed = 0
+    color_corrected = 0
+    cluster_fallback = 0
+    color_fallback = 0
     for y in range(height):
         row = []
+        choice_row = []
         for x in range(width):
             index = y * width + x
             cluster_index = int(labels[index])
-            code = cluster_codes[cluster_index]
-            block = palette_by_code.get(code) or find_blank_block(palette)
+            code, choice = choose_cell_code(
+                ocr_votes[index],
+                cell_rgbs[index],
+                cluster_codes[cluster_index],
+                parse_palette,
+                parse_palette_by_code,
+                cluster_index in inferred_clusters,
+            )
+            block = parse_palette_by_code.get(code) or find_blank_block(parse_palette)
             row.append(block["id"])
-            if cluster_index in inferred_clusters:
-                low_confidence.append(
-                    {
-                        "x": x,
-                        "y": y,
-                        "code": block["code"],
-                        "blockId": block["id"],
-                        "distance": 0,
-                        "source": [int(v) for v in cell_rgbs[index]],
-                        "reason": "OCR 未直接确认，已按同色簇和色块颜色推测",
-                    }
-                )
+            choice["code"] = block["code"]
+            choice["blockId"] = block["id"]
+            choice_row.append(choice)
+            if choice["directOcr"]:
+                direct_ocr_confirmed += 1
+            if choice["corrected"]:
+                color_corrected += 1
+            if choice["source"] == "cluster":
+                cluster_fallback += 1
+            if choice["source"] == "color":
+                color_fallback += 1
         rows.append(row)
+        choices_grid.append(choice_row)
+
+    rows, choices_grid, neighborhood_corrected = apply_neighborhood_consistency(rows, choices_grid, cell_rgbs, parse_palette, width, height)
+    low_confidence = collect_low_confidence_cells(choices_grid, cell_rgbs, width, height)
 
     return {
         "ok": True,
@@ -310,11 +329,192 @@ def build_matrix_from_text_ocr(image, bbox, palette, width, height):
         "stats": {
             "recognized": width * height,
             "total": width * height,
-            "ocrConfirmed": ocr_confirmed,
-            "inferred": width * height - ocr_confirmed,
+            "ocrConfirmed": direct_ocr_confirmed,
+            "inferred": width * height - direct_ocr_confirmed,
+            "colorCorrected": color_corrected,
+            "neighborhoodCorrected": neighborhood_corrected,
+            "clusterFallback": cluster_fallback,
+            "colorFallback": color_fallback,
             "clusters": cluster_count,
+            "sheetPaletteCodes": sorted(sheet_codes),
+            "sheetPaletteRestricted": len(sheet_codes) >= 4,
         },
     }
+
+
+def choose_cell_code(cell_votes, cell_rgb, cluster_code, palette, palette_by_code, cluster_inferred):
+    nearest_distance, nearest_block = nearest_palette(cell_rgb, palette)
+    nearest_code = nearest_block["code"]
+
+    if cell_votes:
+        code, _ = sorted(cell_votes.items(), key=lambda item: item[1], reverse=True)[0]
+        block = palette_by_code.get(code)
+        if block:
+            ocr_distance = color_distance(cell_rgb, block["rgb"])
+            if nearest_code != code and should_correct_by_cell_color(cell_rgb, block["rgb"], nearest_distance, ocr_distance, True):
+                return nearest_code, {
+                    "source": "color",
+                    "directOcr": True,
+                    "corrected": True,
+                    "distance": nearest_distance,
+                    "lowConfidence": True,
+                    "reason": f"OCR 识别为 {code}，但该格底色更接近 {nearest_code}，已按单格底色修正",
+                }
+            return code, {
+                "source": "ocr",
+                "directOcr": True,
+                "corrected": False,
+                "distance": ocr_distance,
+                "lowConfidence": ocr_distance > 70,
+                "reason": "OCR 色号与该格底色差异偏大，请复核",
+            }
+
+    cluster_block = palette_by_code.get(cluster_code)
+    if cluster_block:
+        cluster_distance = color_distance(cell_rgb, cluster_block["rgb"])
+        if nearest_code != cluster_code and should_correct_by_cell_color(
+            cell_rgb,
+            cluster_block["rgb"],
+            nearest_distance,
+            cluster_distance,
+            not cluster_inferred,
+        ):
+            return nearest_code, {
+                "source": "color",
+                "directOcr": False,
+                "corrected": True,
+                "distance": nearest_distance,
+                "lowConfidence": True,
+                "reason": f"同色簇推测为 {cluster_code}，但该格底色更接近 {nearest_code}，已按单格底色修正",
+            }
+        return cluster_code, {
+            "source": "cluster",
+            "directOcr": False,
+            "corrected": False,
+            "distance": cluster_distance,
+            "lowConfidence": cluster_inferred and cluster_distance > 55,
+            "reason": "OCR 未直接确认，已按同色簇和该格底色推测",
+        }
+
+    return nearest_code, {
+        "source": "color",
+        "directOcr": False,
+        "corrected": False,
+        "distance": nearest_distance,
+        "lowConfidence": nearest_distance > 42,
+        "reason": "OCR 未直接确认，已按单格底色推测",
+    }
+
+
+def apply_neighborhood_consistency(rows, choices_grid, cell_rgbs, palette, width, height):
+    id_to_block = {block["id"]: block for block in palette}
+    corrected = 0
+    next_rows = [row[:] for row in rows]
+    next_choices = [[dict(choice) for choice in row] for row in choices_grid]
+    for y in range(height):
+        for x in range(width):
+            current_id = rows[y][x]
+            current_block = id_to_block.get(current_id)
+            if not current_block:
+                continue
+
+            neighbor_ids = []
+            orthogonal_ids = []
+            for dy in (-1, 0, 1):
+                for dx in (-1, 0, 1):
+                    if dx == 0 and dy == 0:
+                        continue
+                    nx = x + dx
+                    ny = y + dy
+                    if nx < 0 or ny < 0 or nx >= width or ny >= height:
+                        continue
+                    neighbor_ids.append(rows[ny][nx])
+                    if abs(dx) + abs(dy) == 1:
+                        orthogonal_ids.append(rows[ny][nx])
+            if not neighbor_ids:
+                continue
+
+            target_id, target_count = max(((item, neighbor_ids.count(item)) for item in set(neighbor_ids)), key=lambda item: item[1])
+            if target_id == current_id:
+                continue
+            target_block = id_to_block.get(target_id)
+            if not target_block:
+                continue
+            orthogonal_count = orthogonal_ids.count(target_id)
+
+            index = y * width + x
+            observed_rgb = cell_rgbs[index]
+            current_distance = color_distance(observed_rgb, current_block["rgb"])
+            target_distance = color_distance(observed_rgb, target_block["rgb"])
+            choice = choices_grid[y][x]
+            weak_cell = choice["lowConfidence"] or choice["corrected"]
+            fallback_without_text = choice["source"] != "ocr"
+            surrounded = target_count >= 6 or (target_count >= 5 and orthogonal_count >= 3)
+            strong_color_support = target_distance < 85 and current_distance - target_distance > 45
+            neighbor_color_support = target_distance <= current_distance + 12
+            if not surrounded:
+                continue
+            if not (weak_cell or strong_color_support or (fallback_without_text and neighbor_color_support)):
+                continue
+            if target_count < 6 and not strong_color_support:
+                continue
+
+            next_rows[y][x] = target_id
+            next_choices[y][x] = {
+                **choice,
+                "source": "neighbor",
+                "corrected": True,
+                "distance": target_distance,
+                "lowConfidence": True,
+                "code": target_block["code"],
+                "blockId": target_block["id"],
+                "reason": f"该格与周边大片同色不一致，已参考周边 {target_block['code']} 和单格底色修正",
+            }
+            corrected += 1
+    return next_rows, next_choices, corrected
+
+
+def collect_low_confidence_cells(choices_grid, cell_rgbs, width, height):
+    low_confidence = []
+    for y in range(height):
+        for x in range(width):
+            choice = choices_grid[y][x]
+            if not choice["lowConfidence"]:
+                continue
+            index = y * width + x
+            low_confidence.append(
+                {
+                    "x": x,
+                    "y": y,
+                    "code": choice["code"],
+                    "blockId": choice["blockId"],
+                    "distance": round(float(choice["distance"]), 1),
+                    "source": [int(v) for v in cell_rgbs[index]],
+                    "reason": choice["reason"],
+                }
+            )
+    return low_confidence
+
+
+def should_correct_by_cell_color(observed_rgb, expected_rgb, nearest_distance, expected_distance, strict):
+    if nearest_distance >= 95:
+        return False
+    improvement = expected_distance - nearest_distance
+    hue_gap = hue_distance(observed_rgb, expected_rgb)
+    if strict:
+        return (improvement > 75 and hue_gap > 30) or (improvement > 130 and nearest_distance < 60)
+    return improvement > 38 and (hue_gap > 28 or improvement > 95)
+
+
+def hue_distance(a, b):
+    pair = np.array([[a, b]], dtype=np.uint8)
+    hsv = cv2.cvtColor(pair, cv2.COLOR_RGB2HSV)[0]
+    hue_a, sat_a = float(hsv[0][0]), float(hsv[0][1])
+    hue_b, sat_b = float(hsv[1][0]), float(hsv[1][1])
+    if min(sat_a, sat_b) < 25:
+        return 0
+    diff = abs(hue_a - hue_b)
+    return min(diff, 180 - diff)
 
 
 def sample_cell_rgbs(image, bbox, width, height):
@@ -330,6 +530,131 @@ def estimate_cluster_count(image, bbox, width, height):
     if swatches:
         return int(clamp(len(swatches) + 6, 12, 48))
     return int(clamp(round(np.sqrt(width * height) / 2), 16, 48))
+
+
+def detect_sheet_palette_codes(tesseract, image, bbox, palette_by_code, palette):
+    codes = set()
+    codes.update(detect_sheet_palette_codes_by_swatch_ocr(tesseract, image, bbox, palette_by_code))
+    codes.update(detect_sheet_palette_codes_by_swatch_color(image, bbox, palette))
+    return {code for code in codes if code in palette_by_code}
+
+
+def get_strong_grid_ocr_codes(ocr_votes):
+    counts = {}
+    for votes in ocr_votes:
+        for code, count in votes.items():
+            counts[code] = counts.get(code, 0) + count
+    total = sum(counts.values())
+    if not total:
+        return set()
+    threshold = max(8, int(total * 0.018))
+    return {code for code, count in counts.items() if count >= threshold}
+
+
+def filter_ocr_votes(ocr_votes, allowed_codes):
+    allowed = set(allowed_codes)
+    return [{code: count for code, count in votes.items() if code in allowed} for votes in ocr_votes]
+
+
+def detect_sheet_palette_codes_by_ocr(tesseract, image, bbox, palette_by_code):
+    _, grid_y, _, grid_h = bbox
+    start_y = min(image.shape[0] - 1, int(grid_y + grid_h + 8))
+    lower = image[start_y:]
+    if lower.size == 0 or lower.shape[0] < 40:
+        return set()
+    scale = 2
+    gray = cv2.cvtColor(lower, cv2.COLOR_RGB2GRAY)
+    enlarged = cv2.resize(gray, None, fx=scale, fy=scale, interpolation=cv2.INTER_CUBIC)
+    with tempfile.TemporaryDirectory(prefix="pixel-pattern-palette-ocr-") as temp_dir:
+        path = os.path.join(temp_dir, "palette.png")
+        cv2.imwrite(path, enlarged)
+        command = [
+            tesseract,
+            path,
+            "stdout",
+            "--psm",
+            "6",
+            "--oem",
+            "1",
+            "-c",
+            "tessedit_char_whitelist=ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
+            "tsv",
+        ]
+        result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, text=True, timeout=30)
+
+    codes = []
+    for line in (result.stdout or "").splitlines()[1:]:
+        parts = line.split("\t")
+        if len(parts) < 12:
+            continue
+        raw = parts[11].strip()
+        codes.extend(parse_ocr_codes(raw, palette_by_code))
+    return set(codes)
+
+
+def detect_sheet_palette_codes_by_swatch_ocr(tesseract, image, bbox, palette_by_code):
+    boxes = detect_palette_swatch_boxes(image, bbox)
+    if not boxes:
+        return set()
+    _, grid_y, _, grid_h = bbox
+    start_y = min(image.shape[0] - 1, int(grid_y + grid_h + 12))
+    codes = set()
+    with tempfile.TemporaryDirectory(prefix="pixel-pattern-swatch-ocr-") as temp_dir:
+        for index, (x, y, w, h) in enumerate(boxes):
+            margin_x = max(1, int(w * 0.08))
+            margin_y = max(1, int(h * 0.12))
+            crop = image[
+                max(0, start_y + y + margin_y) : min(image.shape[0], start_y + y + h - margin_y),
+                max(0, x + margin_x) : min(image.shape[1], x + w - margin_x),
+            ]
+            if crop.size == 0:
+                continue
+            rgb = np.median(crop.reshape(-1, 3), axis=0).tolist()
+            gray = cv2.cvtColor(crop, cv2.COLOR_RGB2GRAY)
+            enlarged = cv2.resize(gray, None, fx=4, fy=4, interpolation=cv2.INTER_CUBIC)
+            path = os.path.join(temp_dir, f"swatch-{index}.png")
+            cv2.imwrite(path, enlarged)
+            command = [
+                tesseract,
+                path,
+                "stdout",
+                "--psm",
+                "7",
+                "--oem",
+                "1",
+                "-c",
+                "tessedit_char_whitelist=ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
+            ]
+            result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, text=True, timeout=8)
+            parsed = parse_ocr_codes(result.stdout or "", palette_by_code)
+            if parsed:
+                code = parsed[0]
+                block = palette_by_code.get(code)
+                if block and color_distance(rgb, block["rgb"]) < 90:
+                    codes.add(code)
+    return codes
+
+
+def detect_sheet_palette_codes_by_swatch_color(image, bbox, palette):
+    boxes = detect_palette_swatch_boxes(image, bbox)
+    codes = set()
+    _, grid_y, _, grid_h = bbox
+    start_y = min(image.shape[0] - 1, int(grid_y + grid_h + 12))
+    for x, y, w, h in boxes:
+        margin_x = max(2, int(w * 0.2))
+        margin_y = max(2, int(h * 0.2))
+        y0 = start_y + y + margin_y
+        y1 = start_y + y + h - margin_y
+        x0 = x + margin_x
+        x1 = x + w - margin_x
+        patch = image[max(0, y0) : min(image.shape[0], y1), max(0, x0) : min(image.shape[1], x1)]
+        if patch.size == 0:
+            continue
+        rgb = np.median(patch.reshape(-1, 3), axis=0).tolist()
+        distance, block = nearest_palette(rgb, palette)
+        if distance < 35:
+            codes.add(block["code"])
+    return codes
 
 
 def detect_palette_swatch_boxes(image, bbox):

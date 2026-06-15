@@ -211,6 +211,7 @@ function bindElements() {
     "paintBlockSelect",
     "cursorStatus",
     "replacementSelect",
+    "replacementOptions",
     "replaceBtn",
     "undoBtn",
     "saveProjectBtn",
@@ -3071,10 +3072,7 @@ function renderStats() {
     els.usedPalette.appendChild(row);
   });
 
-  els.replacementSelect.innerHTML = renderPalette
-    .filter((block) => block.status === "active" && block.id !== state.selectedBlockId)
-    .map((block) => `<option value="${block.id}">${escapeHtml(block.code)} ${escapeHtml(block.name)}</option>`)
-    .join("");
+  renderReplacementOptions();
 
   const activeBlocks = renderPalette.filter((block) => block.status === "active");
   if (!state.paintBlockId || !activeBlocks.some((block) => block.id === state.paintBlockId)) {
@@ -3151,6 +3149,35 @@ function renderCandidateHistory() {
   });
 }
 
+function renderReplacementOptions() {
+  const options = els.replacementOptions;
+  if (!options || !els.replacementSelect) return;
+  const activeBlocks = state.palette
+    .filter((block) => block.status === "active")
+    .sort((a, b) => a.code.localeCompare(b.code, "zh-CN", { numeric: true }));
+  options.innerHTML = activeBlocks
+    .map((block) => `<option value="${escapeHtml(block.code)}">${escapeHtml(block.code)} ${escapeHtml(block.name)}</option>`)
+    .join("");
+  const current = findPaletteBlockFromSearch(els.replacementSelect.value);
+  if (current && !activeBlocks.some((block) => block.id === current.id)) {
+    els.replacementSelect.value = "";
+  }
+}
+
+function findPaletteBlockFromSearch(value) {
+  const query = String(value || "").trim().toUpperCase();
+  if (!query) return null;
+  const code = (query.match(/^[A-Z][0-9]{1,2}/) || [query])[0];
+  const activeBlocks = state.palette.filter((block) => block.status === "active");
+  return (
+    activeBlocks.find((block) => block.id === query) ||
+    activeBlocks.find((block) => block.code.toUpperCase() === code) ||
+    activeBlocks.find((block) => `${block.code} ${block.name}`.toUpperCase() === query) ||
+    activeBlocks.find((block) => `${block.code} ${block.name}`.toUpperCase().includes(query)) ||
+    null
+  );
+}
+
 function addRiskColor(risk) {
   const source = risk.examples[0]?.source;
   if (!source) return;
@@ -3187,16 +3214,29 @@ function countBlocks(matrix = state.matrix) {
 function replaceSelectedColor() {
   if (!state.matrix || !state.selectedBlockId || !els.replacementSelect.value) return;
   const from = state.selectedBlockId;
-  const to = els.replacementSelect.value;
+  const replacementBlock = findPaletteBlockFromSearch(els.replacementSelect.value);
+  if (!replacementBlock) {
+    els.matrixStatus.textContent = "未找到目标色号，请输入如 A2、M15 这样的色号。";
+    return;
+  }
+  const to = replacementBlock.id;
   if (from === to) return;
+  ensureProjectPaletteBlock(replacementBlock);
   const paletteMap = new Map(getRenderPalette().map((block) => [block.id, block]));
   const selectedBlock = paletteMap.get(from);
   pushHistory("全局替换色块");
   state.matrix.rows = state.matrix.rows.map((row) => row.map((id) => (blocksMatch(selectedBlock, paletteMap.get(id)) ? to : id)));
   state.selectedBlockId = to;
+  els.replacementSelect.value = "";
   state.candidateStatus = "pending";
   renderCanvas();
   renderStats();
+}
+
+function ensureProjectPaletteBlock(block) {
+  if (!state.projectPaletteSnapshot) return;
+  if (state.projectPaletteSnapshot.some((item) => item.id === block.id)) return;
+  state.projectPaletteSnapshot = [...state.projectPaletteSnapshot, normalizeBlock(block)].filter(Boolean);
 }
 
 function pushHistory(label) {

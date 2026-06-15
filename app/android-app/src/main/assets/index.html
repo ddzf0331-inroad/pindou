@@ -202,7 +202,8 @@
               </div>
               <div class="status-pill" id="cursorStatus">坐标：-</div>
               <div class="replace-row">
-                <select id="replacementSelect"></select>
+                <input id="replacementSelect" list="replacementOptions" placeholder="输入色号，如 A2" autocomplete="off" />
+                <datalist id="replacementOptions"></datalist>
                 <button class="secondary" id="replaceBtn">全局替换</button>
                 <button class="secondary icon-action" id="undoBtn" title="撤销上次替换">↶</button>
               </div>
